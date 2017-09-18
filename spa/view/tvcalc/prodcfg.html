@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>상품별 가격설정</title>
+	<link rel="stylesheet" href="/spa/css/ons.css">
+	<script src="/spa/lib/jquery.last.min.js"></script>
+	<script src="/spa/lib/knockout.min.js"></script>
+	<script src="/spa/js/viewmodel.js"></script>
+	<script src="/spa/js/tvcalc/prodcfg.js"></script>
+</head>
+<body class="page">
+	<div class="container"> 
+		<h2 class="page-title"><strong>&gt; 방송국 정산관리</strong><span class="text-center">PC방 - 상품별 정산 금액 설정</span></h2>
+
+		<div class="panel" id="panel_prodcfgList">
+            <h3 class="panel-title">설정 목록</h3>
+            <div class="panel-body" id="panel_prodcfg" data-view="">
+                <div class="full-width">
+                	<form class="search-form" action="/ctrl/tvcalc/prodcfg.list.jsp" data-bind="submit: onSubmit">
+	                    
+	                    <br/>
+	                </form>
+	                <div class="">
+                        <div class="spread spread-line6">
+                        
+                            <table>
+                                <colgroup>
+                                </colgroup>
+                                <thead>
+                                    <tr>
+	                                    <th>상품ID</th> 
+										<th>상품명</th>
+										<th>금액</th>
+										<th></th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: list">
+                                    <tr>
+                                        <td data-bind="text: id_prod"></td>
+										<td data-bind="text: nm_prod"></td>
+										<td>
+											<input type="text" name="amg_cfg" data-bind="value: amt_cfg">
+										</td>
+										<td>
+											<button type="button">적용</button>
+										</td>
+                                    </tr>
+                                </tbody>
+                                <tbody data-bind="visible: loading">
+                                    <tr>
+                                        <td colspan="4" class="text-center">Now Loading ...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                           
+                        </div>
+                    </div>
+                    <div class="paging-wrap text-center">
+	                    <div>
+	                        <a href="#" data-bind="click: onPrevClick"><span class="icon icon-arrow-left"></span>이전</a>
+	                        <!-- ko foreach: paging -->
+	                        <!-- ko if: ($parent.page() == $data) -->
+	                        <strong class="selected">[<!-- ko text: $data --><!-- /ko -->]</strong>
+	                        <!-- /ko -->
+	                        <!-- ko if: ($parent.page() != $data) -->
+	                        <a href="#" data-bind="click: $parent.onPageClick">[<!-- ko text: $data --><!-- /ko -->]</a>
+	                        <!-- /ko -->
+	                        <!-- /ko -->
+	                        <a href="#" data-bind="click: onNextClick">다음<span class="icon icon-arrow-right"></span></a>
+	                    </div>
+	                    <span class="abs-right">전체: <span data-bind="text: totalcount"></span> 건</span>
+	                    
+	                </div>
+                </div>
+            </div>
+
+            <div class="panel-body" id="panel_custSvcImgFileSizeUpdate">
+	        	<form class="hide search-form" action="/ctrl/custmng/svcimg.file.size.update.jsp" data-bind="submit: onSubmit" method="post">
+	            </form>
+	            <div data-bind="visible: working">
+	            	<div class="progress-bar">
+	                	<div data-bind="style: {'width': progress() + '%'}"></div>
+	                </div>
+	                <b>작업중... </b> <span data-bind="text: workCurr"></span> / <span data-bind="text: workMax"></span> &nbsp; | 오류(<!-- ko text: workErr --><!-- /ko -->) - 진행율: <!-- ko text: Math.floor(progress()) --><!-- /ko -->%
+                </div>
+	        </div>
+        </div><!-- #panel_custSvcImgSizeUpdate -->
+
+
+
+
+		<div id="panel_custSvcImgList" data-view="" class="panel">
+            <h3 class="panel-title">검색 결과</h3>
+            <div class="panel-body">
+                <div class="full-width">
+                	<form class="search-form" action="/ctrl/custmng/svcimg.info.list.jsp" data-need-selected="yes" data-bind="submit: onSubmit">
+	                    <ul class="input-list inline">
+	                        <li class="input-list-item">
+	                            <label>파일 사이즈 </label>
+	                            <input type="text" name="size" value="300">KB 초과
+	                            <input type="hidden" name="count" value="10">
+	                            <input type="hidden" name="navCount" value="10">
+	                        </li>
+	                    </ul>
+	                    <button type="submit" class="btn btn-w40">조회</button>
+	                </form>
+                    
+                    
+					
+
+                </div>
+            </div>
+            
+        </div><!-- #panel_custSvcImgList -->
+
+	</div>
+</body>
+</html>

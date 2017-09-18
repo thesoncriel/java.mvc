@@ -1,0 +1,88 @@
+<div ng-controller="CustRegReqListController">
+    <var ng-init="imgUri='/ctrl/custmng/regreq.img.jsp?id_reg_seq='"></var>
+    <form name="form_custRegReqList" action="/ctrl/custmng/regreq.list.jsp" class="form-inline hidden" ng-asyncform="auto" param="param">
+        <select name="req_state" ng-model="param.req_state">
+            <option value="Y">등록완료</option>
+            <option value="N">등록대기</option>
+        </select>
+        <input type="text" class="hidden" ng-model="param.page">
+        <button type="submit" class="btn">조회</button>
+    </form>
+    <form name="form_custRegReqImgUpload" action="/ctrl/custmng/regreq.img.upload.jsp" class="inline upload-wrapper clearfix" target="frame_upload" method="post" enctype="multipart/form-data" ng-upload="">
+        <a href="#/reqlist/N" class="btn btn-default" ng-class="{'btn-primary': param.req_state == 'N'}" ng-disabled="uploading">처리요청</a>
+        <a href="#/reqlist/Y" class="btn btn-default" ng-class="{'btn-primary': param.req_state == 'Y'}" ng-disabled="uploading">처리완료</a>
+    
+        <input type="file" name="regreqimg" accept="image/*"/>
+        <button type="button" class="btn btn-success pull-right" ng-disabled="uploading"><i class="glyphicon glyphicon-camera"></i> 요청하기</button>
+        <div ng-show="uploading">
+            <strong class="text-info">업로드중...</strong>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                <span class="sr-only"></span>
+              </div>
+            </div>
+        </div>
+        <div class="print-here">{{print}}</div>
+    </form>
+    <div class="">
+        <div ng-show="loading">
+            <strong class="text-info">Now Loading...</strong>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                <span class="sr-only"></span>
+              </div>
+            </div>
+        </div>
+        <table class="table table-striped table-condensed table text-center">
+            <thead>
+                <tr>
+                    <th>지사</th>
+                    <th>일자</th>
+                    <th>요청사항</th>
+                    <th>완료</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in list">
+                    <td>{{item.nm_corp}}</td>
+                    <td>{{item.dt_insert_date}}</td>
+                    <td>
+                        <a ng-href="{{imgUri + item.id_reg_seq}}" class="btn btn-info" target="_svcImg">사진</a>
+                    </td>
+                    <td>
+                        <span class="text-danger" ng-if="item.req_state == 'N'">대기</span>
+                        <strong class="text-primary" ng-if="item.req_state == 'Y'">완료</strong>
+                        <strong class="text-warning" ng-if="item.req_state == 'C'">취소</strong>
+                    </td>
+                </tr>
+                <tr ng-show="list.length == 0">
+                    <td colspan="4">등록 현황이 존재하지 않습니다.</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="text-center">
+            <ul uib-pagination ng-model="param.page" total-items="totalcount" max-size="navCount" previous-text="이전" next-text="다음" ng-change="onPageChange()"></ul>
+        </div>
+        
+    </div>
+<!--
+    <div id="modal_regReqSvcImgPreview" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">요청된 계약서</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        
+                        <a ng-href="{{imgUri + id_reg_seq}}" target="_svcImg">
+                        <img ng-if="svcImgSrc" ng-src="{{imgUri + id_reg_seq}}" style="width:100%"/></a>
+                    </p>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">닫기</button></div>
+            </div>
+        </div>
+    </div>
+-->
+    <iframe name="frame_upload" src="" class="upload"></iframe>
+</div>

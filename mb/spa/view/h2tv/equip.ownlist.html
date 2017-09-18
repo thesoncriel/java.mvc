@@ -1,0 +1,47 @@
+<div ng-controller="H2tvEquipOwnList">
+    <ol class="breadcrumb">
+        <li class="active">보유셋탑 목록</li>
+    </ol>
+
+    <form name="form_H2tvEquipOwnList" action="/ctrl/h2tv/equip.own.list.jsp" class="form-inline hidden" ng-asyncform="auto" param="param">
+        <var ng-init="param.count = 1000"></var>
+    </form>
+    <div class="text-right">
+        소유: <strong class="text-primary">{{totalcount}}</strong><br>
+        가맹점에 할당된 셋탑: <strong class="text-info">{{custCount}}</strong><br>
+        반납 배송중 셋탑: <strong class="text-danger">{{transCount}}</strong>
+    </div>
+    
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>관리번호</th>
+                <th>종류</th>
+                <th>MAC</th>
+                <th>가맹점</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in listRaw | orderBy: ['id_trans', 'nm_cust']" ng-class="{'success': item.nm_cust, 'info': item.id_trans > 0}">
+                <td>
+                    <i class="glyphicon glyphicon-send text-primary" ng-if="item.id_trans > 0"></i>
+                    {{item.no_serial}}
+                </td>
+                <td>{{item.equip_type}}</td>
+                <td>{{item.mac}}</td>
+                <td>
+                    <strong class="text-primary" ng-if="item.id_trans > 0">배송중</strong>
+                    {{item.nm_cust}}
+                </td>
+            </tr>
+            <tr ng-show="listRaw.length == 0">
+                <td colspan="4" class="text-center">소유된 장비가 없습니다.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- <div class="text-center">
+        <ul uib-pagination ng-model="param.page" total-items="totalcount" max-size="navCount" previous-text="이전" next-text="다음" ng-change="onPageChange()"></ul>
+    </div> -->
+</div>

@@ -1,0 +1,67 @@
+<div ng-controller="H2tvEquipOwnList">
+    <ol class="breadcrumb" ng-if="param.id_req > 0">
+        <li><a href="#/req">신청목록</a></li>
+        <li class="active">장비출하</li>
+    </ol>
+    <ol class="breadcrumb" ng-if="param.id_req == 0">
+        <li><a href="#/transret">반납목록</a></li>
+        <li class="active">장비반납</li>
+    </ol>
+
+    <h4 class="text-center text-primary">
+    <span ng-if="param.id_req > 0">출하</span>
+    <span ng-if="param.id_req == 0">반납</span>
+    할 장비를 선택 해 주세요.</h4>
+
+    <h5 class="text-center text-red" ng-if="param.id_req == 0">
+        ※ 반납하고자 하는 장비가 가맹점에 할당되어 있는지 확인하시길 바랍니다.
+    </h5>
+
+    <div class="text-right text-primary" ng-if="param.id_req > 0">
+        <strong class="text-danger">배송: {{selectedCount}}</strong> / 요청: {{req_cnt}}
+    </div>
+
+    <div class="text-right text-primary" ng-if="param.id_req == 0">
+        <strong class="text-danger">선택: {{selectedCount}}</strong>
+    </div>
+
+    <form name="form_H2tvEquipOwnList" action="/ctrl/h2tv/equip.own.list.jsp" class="form-inline hidden" ng-asyncform="auto" param="param">
+        <var ng-init="param.count=1000"></var>
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>관리번호</th>
+                <th>종류</th>
+                <th>MAC</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="item in list" ng-class="{'text-primary': item.active}" ng-click="$parent.onItemClick(item)">
+                <td>
+                    <i class="glyphicon" ng-class="{'glyphicon-unchecked': !item.active, 'glyphicon-check': item.active}"></i>
+                    {{item.no_serial}}
+                </td>
+                <td>{{item.equip_type}}</td>
+                <td>{{item.mac}}</td>
+            </tr>
+            <tr ng-show="list.length == 0">
+                <td colspan="3" class="text-center">
+                    <span ng-if="param.id_req > 0">출하</span>
+                    <span ng-if="param.id_req == 0">반납</span>
+                 할 수 있는 장비가 없습니다.</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="text-center">
+        <ul uib-pagination ng-model="param.page" total-items="totalcount" max-size="navCount" previous-text="이전" next-text="다음" ng-change="onPageChange()"></ul>
+    </div>
+
+    <div class="text-center">
+        <button class="btn btn-primary" ng-click="onClickSelect()">선택</button>
+        <a href="#/req" class="btn btn-default" ng-if="param.id_req > 0">취소</a>
+        <a href="#/transret" class="btn btn-default" ng-if="param.id_req == 0">취소</a>
+    </div>
+</div>

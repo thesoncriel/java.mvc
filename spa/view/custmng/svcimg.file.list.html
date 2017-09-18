@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>파일 찾기</title>
+	<link rel="stylesheet" href="/spa/css/ons.css">
+	<script src="/spa/lib/jquery.last.min.js"></script>
+	<script src="/spa/lib/knockout.min.js"></script>
+	<script src="/spa/js/viewmodel.js"></script>
+	<script src="/spa/js/custmng/svcimg.file.list.js"></script>
+</head>
+<body class="page">
+	<div class="container"> 
+		<h2 class="page-title"><strong>&gt; 고객관리</strong><span class="text-center">계약서 파일 크기 체크</span></h2>
+
+		<div class="panel">
+            <h3 class="panel-title">이미지 사이즈 자료 갱신</h3>
+            <div class="panel-body" id="panel_custSvcImgFileList" data-view="">
+                <div class="full-width">
+                	<form class="search-form" action="/ctrl/custmng/svcimg.file.list.jsp" data-bind="submit: onSubmit" data-confirm="자료 갱신 작업 시 많은 시간이 소요될 수 있습니다.\n계속 하시겠습니까?">
+	                    <!-- ko if: !working() -->
+	                    작업당 갱신 개수 <input type="text" name="countAtOnce" size="5" value="5"/> <button type="submit" class="btn btn-w60" data-bind="disable: loading">자료 갱신</button><!-- /ko -->
+	                    <!-- ko if: loading() --><b>서버로부터 작업 할 자료를 받아오는 중입니다...</b><!-- /ko -->
+	                    <!-- ko if: working() -->
+	                    <button type="button" class="btn btn-w60" data-confirm="진행 중인 작업을 정말 종료 하시겠습니까?" data-bind="click: onButtonClick">작업 중단</button><!-- /ko -->
+	                    <br/>
+	                </form>
+                </div>
+            </div>
+            <div class="panel-body" id="panel_custSvcImgFileSizeUpdate">
+	        	<form class="hide search-form" action="/ctrl/custmng/svcimg.file.size.update.jsp" data-bind="submit: onSubmit" method="post">
+	            </form>
+	            <div data-bind="visible: working">
+	            	<div class="progress-bar">
+	                	<div data-bind="style: {'width': progress() + '%'}"></div>
+	                </div>
+	                <b>작업중... </b> <span data-bind="text: workCurr"></span> / <span data-bind="text: workMax"></span> &nbsp; | 오류(<!-- ko text: workErr --><!-- /ko -->) - 진행율: <!-- ko text: Math.floor(progress()) --><!-- /ko -->%
+                </div>
+	        </div>
+        </div><!-- #panel_custSvcImgSizeUpdate -->
+
+
+
+
+		<div id="panel_custSvcImgList" data-view="" class="panel">
+            <h3 class="panel-title">검색 결과</h3>
+            <div class="panel-body">
+                <div class="full-width">
+                	<form class="search-form" action="/ctrl/custmng/svcimg.info.list.jsp" data-need-selected="yes" data-bind="submit: onSubmit">
+	                    <ul class="input-list inline">
+	                        <li class="input-list-item">
+	                            <label>파일 사이즈 </label>
+	                            <input type="text" name="size" value="300">KB 초과
+	                            <input type="hidden" name="count" value="10">
+	                            <input type="hidden" name="navCount" value="10">
+	                        </li>
+	                    </ul>
+	                    <button type="submit" class="btn btn-w40">조회</button>
+	                </form>
+                    <div class="">
+                        <div class="spread spread-line6">
+                        
+                            <table>
+                                <colgroup>
+                                    <!-- <col style="width: 40px"/>
+                                    <col style="width: 80px"/>
+                                    <col style="width: 90px"/>
+                                    <col style="width: auto"/>
+                                    <col style="width: 110px"/>
+                                    <col style="width: 110px"/>
+                                    <col style="width: 100px"/> -->
+                                    
+                                </colgroup>
+                                <thead>
+                                    <tr>
+	                                    <th>가맹점ID</th> 
+										<th>계약ID</th>
+										<th>계약 순서</th>
+										<th>사이즈</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: list">
+                                    <tr data-bind="click: $parent.onRowSelect, attr: {'class': selected()? 'selected' : ''}">
+                                        <td data-bind="text: id_cust"></td>
+										<td data-bind="text: id_cust_svc"></td>
+										<td data-bind="text: seq"></td>
+										<td><span data-bind="text: parseInt( file_size / 1024 )"></span> KB</td>
+                                    </tr>
+                                </tbody>
+                                <tbody data-bind="visible: !loading() && list().length == 0">
+                                    <tr>
+                                        <td colspan="4" class="text-center">
+                                        <!-- ko if: aleadySearch -->
+                                        검색 결과가 없습니다.<!-- /ko -->
+                                        <!-- ko ifnot: aleadySearch -->
+                                        자료를 '조회' 하십시오. <!-- /ko -->
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody data-bind="visible: loading">
+                                    <tr>
+                                        <td colspan="4" class="text-center">Now Loading ...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                           
+                        </div>
+                    </div>
+                    
+					<div class="paging-wrap text-center">
+	                    <div>
+	                        <a href="#" data-bind="click: onPrevClick"><span class="icon icon-arrow-left"></span>이전</a>
+	                        <!-- ko foreach: paging -->
+	                        <!-- ko if: ($parent.page() == $data) -->
+	                        <strong class="selected">[<!-- ko text: $data --><!-- /ko -->]</strong>
+	                        <!-- /ko -->
+	                        <!-- ko if: ($parent.page() != $data) -->
+	                        <a href="#" data-bind="click: $parent.onPageClick">[<!-- ko text: $data --><!-- /ko -->]</a>
+	                        <!-- /ko -->
+	                        <!-- /ko -->
+	                        <a href="#" data-bind="click: onNextClick">다음<span class="icon icon-arrow-right"></span></a>
+	                    </div>
+	                    <span class="abs-right">전체: <span data-bind="text: totalcount"></span> 건</span>
+	                    
+	                </div>
+
+                </div>
+            </div>
+            
+        </div><!-- #panel_custSvcImgList -->
+
+	</div>
+</body>
+</html>

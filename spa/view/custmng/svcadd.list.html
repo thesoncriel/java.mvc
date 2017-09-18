@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>가맹점 재계약 자료 다운로드</title>
+	<link rel="stylesheet" href="/spa/css/ons.css">
+    <link rel="stylesheet" href="/spa/css/jquery-ui.min.css">
+    <link rel="stylesheet" href="/spa/css/jquery-ui.theme.min.css">
+	<script src="/spa/lib/jquery.last.min.js"></script>
+    <script src="/spa/lib/jquery-ui.min.js"></script>
+    <script src="/spa/lib/jquery-ui.datepicker-ko.js"></script>
+	<script src="/spa/lib/knockout.min.js"></script>
+	<script src="/spa/js/viewmodel.js"></script>
+	<script src="/spa/js/custmng/otp.log.list.js"></script>
+</head>
+<body class="page">
+	<div class="container"> 
+		<h2 class="page-title"><strong>&gt; 고객관리</strong><span class="text-center">와우시네 재계약</span></h2>
+
+		<div id="panel_otpLogList" data-view="" class="panel">
+           <h3 class="panel-title">요청 자료 다운로드</h3>
+			<div class="panel-body">
+				<div class="full-width">
+					<form class="search-form" action="http://www.wowcine.net/sms/cust_svc_list.jsp" method="get">
+						<input type="text" name="dt_start" class="datepicker" data-bind="value: prop.dt_start">
+                        <input type="text" name="dt_end" class="datepicker" data-bind="value: prop.dt_end">
+
+						<button type="submit" class="btn btn-w60">엑셀</button>
+					</form>
+				</div>
+			</div>    
+        </div><!-- #panel_otpLogList -->
+	</div>
+</body>
+</html>
+</html>

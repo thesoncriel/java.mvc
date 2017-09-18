@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>가맹점 매출내역</title>
+	<link rel="stylesheet" href="/spa/css/ons.css">
+	<link rel="stylesheet" href="/spa/css/jquery-ui.min.css">
+    <link rel="stylesheet" href="/spa/css/jquery-ui.theme.min.css">
+	<script src="/spa/lib/jquery.last.min.js"></script>
+	<script src="/spa/lib/jquery-ui.min.js"></script>
+    <script src="/spa/lib/jquery-ui.datepicker-ko.js"></script>
+	<script src="/spa/lib/placeholders.min.js"></script>
+	<script src="/spa/lib/knockout.min.js"></script>
+	<script src="/spa/js/viewmodel.js"></script>
+	<script src="/spa/js/lnerp/cust.sales.taxbill.js"></script>
+	<!--[if lte IE 7 ]>
+	<script src="/spa/lib/border-box.js"></script>
+	<![endif]-->
+</head>
+<body class="page">
+	<div class="container">
+	<h2 class="page-title"><strong>&gt; 라인넷</strong><span class="text-center">매출 내역 및 세금계산서</span></h2>
+
+	<div class="panel">
+		<h3 class="panel-title">매출내역</h3>
+		<div class="panel-body">
+			<div id="panel_salesXls" data-view="">
+				<form class="search-form" action="/ctrl/lnerp/sales.xls.jsp" method="get">
+					<ul class="input-list inline">
+						<li class="input-list-item">
+							<input type="text" class="datepicker" name="yyyymm_use" data-bind="value: prop.yyyymm_use">
+						</li>
+					</ul>
+					<button type="submit" class="btn btn-w60">다운로드</button>
+					<p>
+						※ 날짜 선택 시 연월만 적용 됩니다.
+					</p>
+				</form>
+			</div>
+			
+		</div>
+	</div>
+
+	<div class="panel">
+		<h3 class="panel-title">매출세금계산서 - 신규 폐업자 등록</h3>
+		<div class="panel-body">
+			<div id="panel_taxbillCloseUpload" data-view="">
+				<form class="search-form" action="/ctrl/lnerp/taxbill.close.upload.jsp" method="POST" enctype="multipart/form-data" target="upload_frame1" data-bind="submit: onSubmitUpload">
+					<ul class="input-list inline">
+						<li class="input-list-item">
+							<input type="text" class="datepicker" name="yyyymm_use" data-bind="value: prop.yyyymm_use">
+						</li>
+						<li class="input-list-item"><input type="file" name="tax_bill_close_excel"></li>
+					</ul>
+					<button type="submit" class="btn btn-w40" data-bind="disable: loading">업로드</button>
+					<button type="button" class="btn btn-w40" data-bind="click: onButtonClick, visible: loading">중지</button>
+					<p>
+						※ 날짜 선택 시 연월만 적용 됩니다.
+					</p>
+					<iframe name="upload_frame1" src="./../_blank.html" frameborder="0" class="upload-frame"></iframe>
+				</form>
+			</div>
+			<div id="panel_taxbillCloseUploadProgress" class="full-width">
+				<form class="hidden" action="/ctrl/lnerp/cust.erp.upload.progress.jsp" method="get"  data-bind="submit: onSubmit">
+				</form>
+				<div data-bind="visible: working">
+	            	<div class="progress-bar">
+	                	<div data-bind="style: {'width': progress() + '%'}"></div>
+	                </div>
+	                <b>작업중... </b> <span data-bind="text: workCurr"></span> / <span data-bind="text: workMax"></span> &nbsp; - 진행율: <!-- ko text: Math.floor(progress()) --><!-- /ko -->%
+                </div>
+                <a href="#" data-bind="click: function(e, vm){prop.showError( !prop.showError() );}">
+                	<!-- ko ifnot: prop.showError -->메시지 보이기<!-- /ko -->
+                	<!-- ko if: prop.showError -->메시지 숨기기<!-- /ko -->
+                	 (<!-- ko text: prop.error().length --><!-- /ko -->건)
+                </a>
+                <div data-bind="visible: prop.showError, foreach: prop.error">
+                	<div data-bind="text: $data"></div>
+                </div>
+			</div>
+		</div>
+	</div>
+
+	<div class="panel">
+		<h3 class="panel-title">매출세금계산서 - 엑셀 자료 추출</h3>
+		<div class="panel-body">
+			<div id="panel_taxbillCreate" data-view="">
+				<form class="search-form" action="/ctrl/lnerp/taxbill.create.jsp" method="get" target="upload_frame2" data-bind="submit: onSubmit">
+					<ul class="input-list inline">
+						<li class="input-list-item">
+							<input type="text" class="datepicker" name="yyyymm_use" data-bind="value: prop.yyyymm_use">
+						</li>
+					</ul>
+					<button type="submit" class="btn btn-w40" data-bind="disable: loading">작업</button>
+					<!-- <button type="button" class="btn btn-w40" data-bind="click: onButtonClick, visible: loading">중지</button> -->
+					<p>
+						※ 날짜 선택 시 연월만 적용 됩니다.
+					</p>
+				</form>
+
+				<iframe name="upload_frame2" src="_blank.html" frameborder="0" class="upload-frame"></iframe>
+			</div>
+			<div id="panel_taxbillCreateProgress" class="full-width">
+				<form class="hidden" action="/ctrl/lnerp/cust.erp.upload.progress.jsp" method="get"  data-bind="submit: onSubmit">
+				</form>
+				<div data-bind="visible: working">
+	            	<div class="progress-bar">
+	                	<div data-bind="style: {'width': progress() + '%'}"></div>
+	                </div>
+	                <b>작업중... </b> <span data-bind="text: workCurr"></span> / <span data-bind="text: workMax"></span> &nbsp; - 진행율: <!-- ko text: Math.floor(progress()) --><!-- /ko -->%
+                </div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="panel">
+		<h3 class="panel-title">매출세금계산서 - 자료 목록</h3>
+		<div class="panel-body">
+			<div id="panel_taxbillList" data-view="">
+				<form action="/ctrl/lnerp/taxbill.list.jsp" class="search-form" data-bind="submit: onSubmit">
+					<div class="hidden">
+						<input type="text" data-bind="value: page">
+					</div>
+					
+					<button type="submit" class="btn btn-w40" data-bind="disable: loading">조회</button>
+				</form>
+				<div class="spread spread-line10">
+					<table>
+						<thead>
+							<tr>
+								<th rowspan="2">생성일</th>
+								<th colspan="2">와우시네 거래처</th>
+								<th colspan="2">씨네호텔 거래처</th>
+								<th colspan="2">다운로드</th>
+							</tr>
+							<tr>
+								<th>발행</th>
+								<th>미발행</th>
+								<th>발행</th>
+								<th>미발행</th>
+								<th>와우시네</th>
+								<th>시네호텔</th>
+							</tr>
+						</thead>
+						<tbody data-bind="foreach: list">
+							<tr data-bind="click: $parent.onRowSelect">
+								<td data-bind="text: dt_insert"></td>
+								<td data-bind="text: wow_inv_cnt"></td>
+								<td data-bind="text: wow_invno_cnt"></td>
+								<td data-bind="text: ptv_inv_cnt"></td>
+								<td data-bind="text: ptv_invno_cnt"></td>
+								<td>
+									<!-- ko if: file_name_wow -->
+									<a data-bind="attr: {'href': '/ctrl/lnerp/excel.download.jsp?file=' + file_name_wow}">&#9712; 다운로드</a>
+									<!-- /ko -->
+								</td>
+								<td>
+									<!-- ko if: file_name_ptv -->
+									<a data-bind="attr: {'href': '/ctrl/lnerp/excel.download.jsp?file=' + file_name_ptv}">&#9712; 다운로드</a>
+									<!-- /ko -->
+								</td>
+							</tr>
+						</tbody>
+						<tbody data-bind="visible: !loading() && list().length == 0">
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                <!-- ko if: aleadySearch -->
+                                검색 결과가 없습니다.<!-- /ko -->
+                                <!-- ko ifnot: aleadySearch -->
+                                자료를 '조회' 하십시오. <!-- /ko -->
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody data-bind="visible: loading">
+                            <tr>
+                                <td colspan="7" class="text-center">Now Loading...</td>
+                            </tr>
+                        </tbody>
+					</table>
+				</div>
+				<div class="paging-wrap text-center">
+                    <div>
+                        <a href="#" data-bind="click: onPrevClick"><span class="icon icon-arrow-left"></span>이전</a>
+                        <!-- ko foreach: paging -->
+                        <!-- ko if: ($parent.page() == $data) -->
+                        <strong class="selected">[<!-- ko text: $data --><!-- /ko -->]</strong>
+                        <!-- /ko -->
+                        <!-- ko if: ($parent.page() != $data) -->
+                        <a href="#" data-bind="click: $parent.onPageClick">[<!-- ko text: $data --><!-- /ko -->]</a>
+                        <!-- /ko -->
+                        <!-- /ko -->
+                        <a href="#" data-bind="click: onNextClick">다음<span class="icon icon-arrow-right"></span></a>
+                    </div>
+                    <span class="abs-right">총: <span data-bind="text: totalcount"></span> 건</span>
+                    
+                </div>
+			</div><!-- // #panel_custNewList -->
+		</div>
+	</div>
+
+
+	</div><!-- .container -->
+</body>
+</html>

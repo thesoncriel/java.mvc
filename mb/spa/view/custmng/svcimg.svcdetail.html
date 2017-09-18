@@ -1,0 +1,83 @@
+<div ng-controller="CustSvcImgDetailController">
+    <form name="form_custSvcImgList" action="/ctrl/custmng/svcimg.list.jsp" class="form-inline" ng-asyncform="auto" param="param">
+        <input type="text" name="id_cust" class="hidden" ng-model="param.id_cust"/>
+    </form>
+    <div class="">
+        <div ng-show="loading">
+            <strong class="text-info">Now Loading...</strong>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                <span class="sr-only"></span>
+              </div>
+            </div>
+        </div>
+        
+        <h3>계약 정보</h3>
+        <table class="table table-condensed text-center">
+            <thead>
+                <tr>
+                    <th>이용 상품</th>
+                    <th>서비스 상태</th>
+                    <th>약정기간</th>
+                    <th>납부방법</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in svcInfo" ng-class="{'info': selected == $index}" ng-click="onClickSvcInfo(item, $index)">
+                    <td>{{item.prod_name}}</td>
+                    <td>{{item.svc_status}}</td>
+                    <td>{{item.cust_cond}} 
+                        <span ng-if="item.ym_end">
+                        ({{item.ym_start}} ~ {{item.ym_end}})
+                        </span>
+                    </td>
+                    <td>{{item.payer_method_nm}}</td>
+                </tr>
+                <tr ng-show="svcInfo.length == 0">
+                    <td colspan="3">계약 내용이 없습니다.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>계약서 이미지 <small>ID: {{id_cust_svc || "모두"}}</small></h3>
+        <var ng-init="imgPath='/ctrl/custmng/svcimg.img.jsp?'"></var>
+        <div ng-show="uploading">
+            <strong class="text-info">업로드중...</strong>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                <span class="sr-only"></span>
+              </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6 col-sm-4 col-md-3" ng-repeat="item in svcImgList | filter:{id_cust_svc: id_cust_svc} as filtered">
+                <div ng-controller="CustSvcImgModifyController">
+                    <var ng-init="currFiltered = filtered"></var>
+                    <a ng-href="/mb/spa/view/custmng/svcimg.popup.html#/svcimg/{{item.id_cust_svc}}/{{item.seq}}" class="btn btn-lg btn-block svcimg-altbox btn-primary" target="custSvcImg" ng-if="item.yn_confirm == 'Y'">{{item.seq}}</a>
+                    <button class="btn btn-lg btn-block svcimg-altbox btn-default" disabled ng-if="item.yn_confirm != 'Y'">{{item.seq}}</button>
+                    <div class="caption" ng-click="setItem(item)">
+                        <var ng-init="msgUploadComplete='계약서 이미지 업로드가 완료 되었습니다.'"></var>
+                        <form name="form_svcimgUpload" data-index="{{$index}}" action="/ctrl/custmng/svcimg.modify.jsp" class="inline-block upload-wrapper" method="post" enctype="multipart/form-data" ng-upload="" target="frame_upload">
+                            <input type="file" name="svcimg" accept="image/*"/>
+                            <input type="text" name="id_cust_svc" class="hidden" ng-value="item.id_cust_svc">
+                            <input type="text" name="seq" class="hidden" ng-value="item.seq">
+                            <button type="button" class="btn btn-default" ng-disabled="uploading || modifying">변경</button>
+                        </form>
+                        <form name="form_svcimgModifyDefault" action="/ctrl/custmng/svcimg.modify.default.jsp" class="inline-block upload-wrapper" method="post" ng-asyncform="">
+                            <input type="text" name="id_cust_svc" class="hidden" ng-model="item.id_cust_svc">
+                            <input type="text" name="seq" class="hidden" ng-model="item.seq">
+                            <input type="text" name="yn_default" class="hidden" ng-model="item.yn_default">
+                            <button type="submit" class="btn btn-default" ng-class="{'btn-success': item.yn_default == 'Y'}" ng-disabled="item.yn_confirm != 'Y' || uploading || modifying"><i class="glyphicon glyphicon-bookmark"></i></button>
+                        </form>
+                        <!--<form name="form_svcimgDelete" action="/ctrl/custmng/svcimg.delete.jsp" class="inline-block upload-wrapper pull-right" method="post" ng-asyncform="" confirm="해당 계약서를 삭제 하시겠습니까?">
+                            <input type="text" name="id_cust_svc" class="hidden" ng-model="item.id_cust_svc">
+                            <input type="text" name="seq" class="hidden" ng-model="item.seq">
+                            <button type="submit" class="btn btn-danger" ng-class="{'btn-success': item.yn_default == 'Y'}" ng-disabled="item.yn_confirm != 'Y' || uploading || modifying"><i class="glyphicon glyphicon-trash"></i></button>
+                        </form>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <iframe name="frame_upload" class="upload"></iframe>
+    </div>
+</div>

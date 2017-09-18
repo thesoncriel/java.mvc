@@ -1,0 +1,44 @@
+<div ng-controller="H2tvEquipReqAdd">
+    <ol class="breadcrumb">
+        <li><a href="#/req">신청목록</a></li>
+        <li class="active">추가</li>
+    </ol>
+	<form name="form_H2tvEquipReqAdd" action="/ctrl/h2tv/equip.req.add.jsp" class="form-horizontal" method="post" ng-asyncform="" param="param" confirm="장비 신청을 하시겠습니까?">
+        <div class="form-group">
+            <label for="" class="col-sm-2 control-label">장비선택</label>
+            <div class="col-sm-10">
+                <select name="equip_type" class="form-control" ng-model="param.equip_type">
+                    <option value="ASTB">스트리밍 성인 STB</option>
+                    <option value="STB">일반 STB</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-sm-2 control-label">신청개수</label>
+            <div class="col-sm-10">
+                <select name="req_cnt" class="form-control" ng-model="param.req_cnt">
+                    <option value="1">1대</option>
+                    <option value="2">2대</option>
+                    <option value="3">3대</option>
+                    <option value="4">4대</option>
+                    <option value="5">5대</option>
+                    <option value="6">6대</option>
+                    <option value="7">7대</option>
+                    <option value="8">8대</option>
+                    <option value="9">9대</option>
+                    <option value="10">10대</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="" class="col-sm-2 control-label">사유 상세</label>
+            <div class="col-sm-10">
+                <textarea name="reason" id="" cols="30" rows="10" class="form-control" placeholder="사유 상세" ng-model="param.reason"></textarea>
+            </div>
+        </div>
+        <div class="text-right">
+            <button type="submit" class="btn btn-success">등록</button>
+            <a href="#/req" class="btn btn-default">취소</a>
+        </div>
+    </form>
+</div>

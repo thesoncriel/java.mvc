@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>ONS - 등록요청 확인</title>
+	<link rel="stylesheet" href="/spa/css/ons.css">
+	<script src="/spa/lib/jquery.last.min.js"></script>
+	<script src="/spa/lib/knockout.min.js"></script>
+	<script src="/spa/js/viewmodel.js"></script>
+	<script src="/spa/js/custmng/regreq.list.js"></script>
+</head>
+<body class="page">
+	<div class="container"> 
+		<h2 class="page-title"><strong>&gt; 고객관리</strong><span class="text-center">가맹점 등록 요청</span></h2>
+
+		<div id="panel_custRegReqAllow">
+        	<div data-bind="visible: loading">
+            	<div class="progress-bar">
+                	<div></div>
+                </div>
+            </div>
+        	<form action="/ctrl/custmng/regreq.allow.jsp" method="post" class="hidden">
+        		<input type="text" name="id_req_seq" value="">
+        		<input type="text" name="id_cust" value="">
+        	</form>
+        </div>
+
+        <div id="panel_custRegReqCancel">
+        	<div data-bind="visible: loading">
+            	<div class="progress-bar">
+                	<div></div>
+                </div>
+            </div>
+        	<form action="/ctrl/custmng/regreq.cancel.jsp" method="post" class="hidden">
+        		<input type="text" name="id_req_seq" value="">
+        	</form>
+        </div>
+
+		<div id="panel_custRegReqList" data-view="" class="panel">
+            <h3 class="panel-title">검색 결과</h3>
+            <div class="panel-body">
+				<strong>※ 누르면 조회 됩니다.</strong>
+            	<div class="tab">
+            		<a class="tab-item" href="#wait" data-bind="click: onTabClick">요청목록</a>
+            		<a class="tab-item" href="#comp" data-bind="click: onTabClick">완료목록</a>
+            		<div class="clearfix"></div>
+            	</div>
+
+                <div class="full-width">
+                	<form class="search-form hidden" action="/ctrl/custmng/regreq.list.jsp" data-need-selected="no" data-bind="submit: onSubmit">
+                		<input type="hidden" name="count" value="10">
+                        <input type="hidden" name="navCount" value="10">
+                        <input type="hidden" name="allreq" value="1">
+	                    <ul class="input-list inline">
+	                        <li class="hidden">
+	                            <label>요청 상태 </label>
+	                            <select name="req_state" data-bind="value: prop.req_state">
+	                            	<option value="N">대기중</option>
+	                            	<option value="Y">완료</option>
+	                            </select>
+	                        </li>
+	                    </ul>
+	                    <!--<button type="submit" class="btn btn-w40">조회</button>-->
+	                </form>
+                    <div class="">
+                        <div class="spread spread-line6">
+                        
+                            <table>
+                                <colgroup>
+                                    <!-- <col style="width: 40px"/>
+                                    <col style="width: 80px"/>
+                                    <col style="width: 90px"/>
+                                    <col style="width: auto"/>
+                                    <col style="width: 110px"/>
+                                    <col style="width: 110px"/>
+                                    <col style="width: 100px"/> -->
+                                    
+                                </colgroup>
+                                <thead>
+                                    <tr>
+	                                    <th>지사</th>
+	                                    <th>일자</th>
+	                                    <th>요청사항</th>
+	                                    <th>
+                                    	<!-- ko if: prop.req_state() == 'N' -->
+	                                    완료
+	                                    <!-- /ko -->
+	                                    <!-- ko if: prop.req_state() == 'Y' -->
+	                                    가맹점ID
+	                                    <!-- /ko -->
+	                                    </th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: list">
+                                    <tr data-bind="click: $parent.onRowSelect">
+                                        <td data-bind="text: nm_corp"></td>
+										<td data-bind="text: dt_insert_date"></td>
+										<td>
+                                            <a data-bind="attr: {'href' : '/ctrl/custmng/regreq.img.jsp?id_reg_seq=' + id_reg_seq}, visible: dtl_seq == 0" target="_blank">&#9712; 사진</a>
+                                            <a data-bind="attr: {'href' : '/spa/view/custmng/regreq.dtl.html?id_reg_seq=' + id_reg_seq}, visible: dtl_seq > 0" target="_blank">&#9678; 상세</a>
+                                        </td>
+										<td>
+											<!-- ko if: req_state() == 'N' -->
+											<button type="button" class="btn btn-w40" data-bind="click: $parent.onItemClick, enable: req_state() != 'Y'">완료</button>
+											<button type="button" class="btn btn-w40" data-role="cancel" data-bind="click: $parent.onItemClick">취소</button>
+											<!-- /ko -->
+											<!-- ko if: req_state() == 'C' -->
+											취소됨
+											<!-- /ko -->
+											<!-- ko if: req_state() == 'Y' -->
+											<strong data-bind="text: id_cust"></strong>
+											<!-- /ko -->
+										</td>
+                                    </tr>
+                                </tbody>
+                                <tbody data-bind="visible: !loading() && list().length == 0">
+                                    <tr>
+                                        <td colspan="4" class="text-center">
+                                        <!-- ko if: aleadySearch -->
+                                        검색 결과가 없습니다.<!-- /ko -->
+                                        <!-- ko ifnot: aleadySearch -->
+                                        자료를 '조회' 하십시오. <!-- /ko -->
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody data-bind="visible: loading">
+                                    <tr>
+                                        <td colspan="4" class="text-center">Now Loading ...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                           
+                        </div>
+                    </div>
+                    
+					<div class="paging-wrap text-center">
+	                    <div>
+	                        <a href="#" data-bind="click: onPrevClick"><span class="icon icon-arrow-left"></span>이전</a>
+	                        <!-- ko foreach: paging -->
+	                        <!-- ko if: ($parent.page() == $data) -->
+	                        <strong class="selected">[<!-- ko text: $data --><!-- /ko -->]</strong>
+	                        <!-- /ko -->
+	                        <!-- ko if: ($parent.page() != $data) -->
+	                        <a href="#" data-bind="click: $parent.onPageClick">[<!-- ko text: $data --><!-- /ko -->]</a>
+	                        <!-- /ko -->
+	                        <!-- /ko -->
+	                        <a href="#" data-bind="click: onNextClick">다음<span class="icon icon-arrow-right"></span></a>
+	                    </div>
+	                    <span class="abs-right">전체: <span data-bind="text: totalcount"></span> 건</span>
+	                    
+	                </div>
+
+                </div>
+            </div>
+            
+        </div><!-- #panel_custSvcImgList -->
+	</div>
+</body>
+</html>

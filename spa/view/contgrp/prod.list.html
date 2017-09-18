@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>컨텐츠 그룹 - 상품 적용</title>
+	<link rel="stylesheet" href="/spa/css/ons.css">
+	<script src="/spa/lib/jquery.last.min.js"></script>
+	<script src="/spa/lib/placeholders.min.js"></script>
+	<script src="/spa/lib/knockout.min.js"></script>
+	<script src="/spa/js/viewmodel.js"></script>
+	<script src="/spa/js/contgrp/prod.list.js"></script>
+	<!--[if lte IE 7 ]>
+	<script src="/spa/lib/border-box.js"></script>
+	<![endif]-->
+</head>
+<body class="page">
+	<div class="container">
+	<h2 class="page-title"><strong>&gt; 컨텐츠 그룹</strong><span class="text-center">상품 그룹 설정 및 적용</span></h2>
+
+
+	<div class="row">
+		<div class="col-10">
+			<div class="panel">
+				<h3 class="panel-title">상품 선택</h3>
+				<div class="panel-body">
+					<div id="panel_prodList" class="full-width">
+						<form action="/ctrl/contgrp/prod.list.jsp" class="search-form" data-need-selected="yes" data-bind="submit: onSubmit">
+							<ul class="input-list inline">
+								<li class="input-list-item">
+									<input type="text" name="nm_prod" data-bind="value: prop.nm_prod" size="12" placeholder="상품명">
+								</li>
+								<li class="input-list-item">
+									<label for="">개수</label>
+									<select name="count" data-bind="value: count">
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="30">30</option>
+										<option value="40">40</option>
+										<option value="50">50</option>
+									</select>
+								</li>
+							</ul>
+							<button type="submit" class="btn btn-w40">조회</button>
+						</form>
+						<div class="spread spread-line6">
+							<table>
+								<thead>
+									<tr>
+										<th>상품명</th>
+										<th>적용 개수</th>
+									</tr>
+								</thead>
+								<tbody data-bind="foreach: list">
+									<tr data-bind="click: $parent.onRowSelect">
+										<td data-bind="text: nm_prod"></td>
+										<td data-bind="text: group_count"></td>
+									</tr>
+								</tbody>
+								<tbody data-bind="visible: !loading() && list().length == 0">
+                                    <tr>
+                                        <td colspan="2" class="text-center">
+                                        <!-- ko if: aleadySearch -->
+                                        검색 결과가 없습니다.<!-- /ko -->
+                                        <!-- ko ifnot: aleadySearch -->
+                                        자료를 '조회' 하십시오. <!-- /ko -->
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody data-bind="visible: loading">
+                                    <tr>
+                                        <td colspan="2" class="text-center">Now Loading ...</td>
+                                    </tr>
+                                </tbody>
+							</table>
+						</div>
+						<div class="paging-wrap text-center">
+		                    <div>
+		                        <a href="#" data-bind="click: onPrevClick"><span class="icon icon-arrow-left"></span>이전</a>
+		                        <!-- ko foreach: paging -->
+		                        <!-- ko if: ($parent.page() == $data) -->
+		                        <strong class="selected">[<!-- ko text: $data --><!-- /ko -->]</strong>
+		                        <!-- /ko -->
+		                        <!-- ko if: ($parent.page() != $data) -->
+		                        <a href="#" data-bind="click: $parent.onPageClick">[<!-- ko text: $data --><!-- /ko -->]</a>
+		                        <!-- /ko -->
+		                        <!-- /ko -->
+		                        <a href="#" data-bind="click: onNextClick">다음<span class="icon icon-arrow-right"></span></a>
+		                    </div>
+		                    <span class="abs-right">전체: <span data-bind="text: totalcount"></span> 건</span>
+		                    
+		                </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-5">
+
+			<div class="panel">
+				<h3 class="panel-title">그룹 적용</h3>
+				<div class="panel-body">
+					<div id="panel_prodApply" class="hidden">
+						<form action="/ctrl/contgrp/prod.apply.jsp" method="post">
+							<input type="hidden" name="id_prod" data-bind="value: prop.id_prod">
+							<input type="hidden" name="id_group" data-bind="value: prop.id_group">
+						</form>
+					</div>
+					<div id="panel_contgrpList" class="full-width">
+						<form action="/ctrl/contgrp/contgrp.list.jsp" class="search-form" data-multi-selected="yes" data-bind="submit: onSubmit">
+							<button type="submit" class="btn btn-w40">조회</button>
+						</form>
+						<div class="spread spread-line10">
+							<table>
+								<thead>
+									<tr>
+										<th>그룹명</th>
+									</tr>
+								</thead>
+								<tbody data-bind="foreach: list">
+									<tr data-bind="click: $parent.onRowSelect, attr: {'class': selected()? 'selected' : ''}">
+										<td data-bind="text: group_name"></td>
+									</tr>
+								</tbody>
+								<tbody data-bind="visible: !loading() && list().length == 0">
+                                    <tr>
+                                        <td colspan="1" class="text-center">
+                                        <!-- ko if: aleadySearch -->
+                                        생성된 그룹이 없습니다.<!-- /ko -->
+                                        <!-- ko ifnot: aleadySearch -->
+                                        자료를 '조회' 하십시오. <!-- /ko -->
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody data-bind="visible: loading">
+                                    <tr>
+                                        <td colspan="1" class="text-center">Now Loading...</td>
+                                    </tr>
+                                </tbody>
+							</table>
+						</div>
+					</div><!-- .full-width -->
+
+				</div>
+			</div>
+		</div>
+	</div><!-- .row-->
+	</div><!-- .container -->
+</body>
+</html>

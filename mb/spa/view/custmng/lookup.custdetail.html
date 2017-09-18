@@ -1,0 +1,83 @@
+<div ng-controller="CustDetailController">
+    <var ng-init="msgLookupDetailFail='가맹점 상세 조회에 실패 했습니다.'"></var>
+    <form name="form_custDetail" action="/ctrl/custmng/cust.detail.jsp" class="form-inline" ng-asyncform="auto" param="param">
+        <input type="text" class="hidden" name="id_cust" ng-model="param.id_cust"/>
+        <input type="text" class="hidden" name="with" ng-model="param.id_cust"/>
+    </form>
+    <br/>
+    <div class="">
+        <blockquote>
+            <p>
+                ※ 아래 가맹점 정보는 <b class="text-info">ons.ontown.co.kr</b>의 내용을 기준으로 합니다.
+            </p>
+            <p>
+                ※ 미납개월수, 미납금은 연체료를 포함한 내용입니다.
+            </p>
+            <p>
+                ※ 가맹점의 자세한 미납내역 및 위약금 관련 문의는 씨네호텔 영업팀, 채권팀에게 요청 부탁드립니다.
+            </p>
+        </blockquote>
+
+        <div ng-show="loading">
+            <strong class="text-info">Now Loading...</strong>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                <span class="sr-only"></span>
+              </div>
+            </div>
+        </div>
+
+        <h3>가맹점 정보 <small>괄호안은 <b class="text-primary">라인넷</b> 내역임.</small></h3>
+        <table class="table table-striped table-condensed">
+            <tbody>
+                <tr>
+                    <th scope="row">가맹점 ID</th>
+                    <td>{{detail.id_cust}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">가맹점 이름</th>
+                    <td>{{detail.nm_cust}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">서비스 상태</th>
+                    <td>{{detail.cd_cust_stat_nm}}</td>
+                </tr>
+                <tr>
+                    <th scope="row">미납금액</th>
+                    <td>{{detail.unpmt_val | number}} ({{linenet.unpmt_val | number}})</td>
+                </tr>
+                <tr>
+                    <th scope="row">미납개월수</th>
+                    <td>{{detail.unpmt_cnt}} ({{linenet.unpmt_cnt}})</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>계약 정보</h3>
+        <table class="table table-striped table-condensed text-center">
+            <thead>
+                <tr>
+                    <th>이용 상품</th>
+                    <th>서비스 상태</th>
+                    <th>약정기간</th>
+                    <th>납부방법</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in svcInfo">
+                    <td>{{item.prod_name}}</td>
+                    <td>{{item.svc_status}}</td>
+                    <td>{{item.cust_cond}} 
+                        <span ng-if="item.ym_end">
+                        ({{item.ym_start}} ~ {{item.ym_end}})
+                        </span>
+                    </td>
+                    <td>{{item.payer_method_nm}}</td>
+                </tr>
+                <tr ng-show="svcInfo.length == 0">
+                    <td colspan="4">계약 내용이 없습니다.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

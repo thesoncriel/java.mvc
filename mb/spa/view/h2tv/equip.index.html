@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <title>ONS - 장비(STB) 관리</title>
+        <link rel="stylesheet" type="text/css" href="/mb/spa/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="/mb/spa/css/onsmobile.css" />
+        <script src="/mb/spa/lib/jquery-2.2.3.min.js"></script>
+        <script src="/mb/spa/lib/bootstrap.min.js"></script>
+        <script src="/mb/spa/lib/angular.js"></script>
+        <script src="/mb/spa/lib/angular-animate.min.js"></script>
+        <script src="/mb/spa/lib/angular-sanitize.min.js"></script>
+        <script src="/mb/spa/lib/angular-ui-router.min.js"></script>
+        <script src="/mb/spa/lib/ui-bootstrap-tpls-2.2.0.min.js"></script>
+        <script src="/mb/spa/lib/ng-asyncform.js?v=1"></script>
+        <script src="/mb/spa/js/service/common.service.js"></script>
+        <script src="/mb/spa/js/directive/common.directive.js"></script>
+        <script src="/mb/spa/js/controller/h2tv/equip.controller.js"></script>
+        <script src="/mb/spa/js/route/h2tv/equip.route.js"></script>
+        <script src="/mb/spa/js/onsmobile.js?v=7"></script>
+    </head>
+    <body ng-app="onsmobile" ng-controller="base">
+        <section class="container equip-manage">
+            <nav>
+            <a class="btn btn-xs btn-default" href ui-sref-active="btn-primary" ui-sref="reqadd">셋탑신청</a>
+            <a class="btn btn-xs btn-default" href ui-sref-active="btn-primary" ui-sref="trans">수령확인</a>
+            <a class="btn btn-xs btn-default" href ui-sref-active="btn-primary" ui-sref="transret">셋탑반납</a>
+            <a class="btn btn-xs btn-default" href ui-sref-active="btn-primary" ui-sref="cust">지사할당</a>
+            <a class="btn btn-xs btn-default" href ui-sref-active="btn-primary" ui-sref="ownlist">보유셋탑</a>
+            </nav>
+            
+        	<!-- <ul class="nav nav-pills">
+    			<li role="presentation" ui-sref-active="active"><a href ui-sref="reqadd">셋탑신청</a></li>
+    			<li role="presentation" ui-sref-active="active"><a href ui-sref="trans">수령확인</a></li>
+    			<li role="presentation" ui-sref-active="active"><a href ui-sref="transret">셋탑반납</a></li>
+                <li role="presentation" ui-sref-active="active"><a href ui-sref="cust">지사할당</a></li>
+                <li role="presentation" ui-sref-active="active"><a href ui-sref="ownlist">보유셋탑</a></li>
+    		</ul> -->
+            <article data-ui-view="" data-autoscroll="false" ng-class="view-ani"></article>
+        </section>
+    </body>
+</html>

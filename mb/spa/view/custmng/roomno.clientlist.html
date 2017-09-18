@@ -1,0 +1,115 @@
+<div ng-controller="ClientRoomNoListController as roomNoList">
+    <form name="form_clientRoomNoList" action="/ctrl/custmng/client.list.jsp" class="form-inline" ng-asyncform="auto" param="param">
+        <input type="text" class="hidden" name="id_cust" ng-model="param.id_cust" />
+    </form>
+    <strong class="text-warning">
+        ※ 최대 활성화 개수에는 가맹점별로 제한이 있습니다.<br/>
+        ※ OTP를 사용중인 CLIENT는 활성화 개수 제한에 포함되지 않습니다.<br/>
+        ※ 더 이상 <u class="text-info">OTP를 지원하지 않으므로</u> 신규/변경 업무 진행 시 반드시 <strong class="bg-danger">방번호</strong> 설정을 진행하여 주십시요.<br/>
+    </strong>
+    <br/>
+    <br/>
+    <div ng-controller="ClientPeriodController">
+        <div class="row">
+            <div class="col-xs-12 col-sm-6">
+                <ul>
+                    <li><strong>가맹점ID : </strong>{{id_cust}}</li>
+                    <li><strong>가맹점이름 : </strong>{{nm_cust}}</li>
+                    <li><strong>개수 제한 : </strong>{{useCount}} / <strong class="text-danger">{{max}}</strong> <span ng-if="otpCount > 0">(<b class="text-primary">OTP</b>={{otpCount}})</span></li>
+                </ul>
+            </div>
+            
+            <div class="col-xs-12 col-sm-6 text-center">
+                <var ng-init="msgPeriodSubmitSuccess = '동기화가 완료 되었습니다.'"></var>
+                <var ng-init="msgPeriodListFail = '동기화 목록을 받는데 실패 했습니다.'"></var>
+                <var ng-init="periodPath = '/VODS_MS/PeriodInfoReq.do'"></var>
+                <var ng-init="periodResCode = 500"></var>
+                <form name="form_periodList" action="/ctrl/custmng/period.list.jsp" class="form-inline" ng-asyncform="">
+                    <button type="submit" class="btn btn-danger" ng-disabled="working">
+                        <i class="glyphicon glyphicon-cog"></i>
+                        <span ng-show="working == false">동기화</span>
+                        <span ng-show="working">진행중...</span>
+                    </button>
+                    <button type="button" class="btn btn-primary" ng-click="onClick_refresh()" ng-disabled="working || loadingList">
+                        <i class="glyphicon glyphicon-refresh"></i>
+                            새로고침
+                    </button>
+                    <a href="#/custlist" class="btn btn-default">
+                        <i class="glyphicon glyphicon-th-list"></i> 목록
+                    </a>
+                </form>
+                <form name="form_periodSubmit" action="/ctrl/custmng/period.submit.jsp" class="form-inline" ng-asyncform="" param="param">
+                    <input type="text" class="hidden" ng-model="param.url"/>
+                    <div class="progress" ng-show="working">
+                      <div class="progress-bar progress-bar-striped progress-bar-info active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" ng-style="{'width': progress + '%'}">
+                        <span class="sr-only">진행중...</span>
+                      </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <br/>
+        <div class="alert alert-danger" role="alert" ng-show="errList.length > 0">
+            <strong>동기화 실패 목록</strong>
+            <ul>
+                <li ng-repeat="err in errList">{{err}}</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="">
+        <div ng-show="loadingList">
+            <strong class="text-info">Now Loading...</strong>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+                <span class="sr-only"></span>
+              </div>
+            </div>
+        </div>
+        <table class="table table-striped table-condensed text-center text-middle">
+            <thead>
+                <tr>
+                    <th class="hidden-xs">클라이언트IP</th>
+                    <th>MAC(Client)</th>
+                    <th>방번호</th>
+                    <th>개통일</th>
+                    <th>적용</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in list">
+                    <td class="hidden-xs">{{item.client_ip}}</td>
+                    <td>{{item.client_mac}}</td>
+                    <td>
+                        <strong class="text-info" ng-if="!item.room_no">OTP</strong>
+                        {{item.room_no}}
+                    </td>
+                    <td>
+                        <span ng-if="!item.dt_update">{{item.dt_insert}}</span>
+                        <span ng-if="item.dt_insert <= item.dt_update">{{item.dt_update}}</span>
+                    </td>
+                    <td ng-controller="ClientRoomNoEnableController">
+                        <var ng-init="clientItem = item"></var>
+                        <var ng-init="msgEnableFail = '클라이언트 활성화 변환에 실패 했습니다.'"></var>
+                        <var ng-init="msgEnableLimit = '이미 활성화 된 클라이언트 개수가 최대치 입니다.'"></var>
+                        <var ng-init="msgOtpEnableNotAllow = '비활성화 된 OTP를 다시 재활성화 할 수 없습니다.'"></var>
+                        <form name="form_clientRoomEnable" action="/ctrl/custmng/client.enable.jsp" class="form-inline" method="post" ng-asyncform="">
+                            <input type="text" class="hidden" name="id_cust" ng-model="item.id_cust" />
+                            <input type="text" class="hidden" name="client_mac" ng-model="item.client_mac" />
+                            <input type="text" class="hidden" name="yn_use" ng-model="item.yn_use" />
+                            <button type="submit" class="btn" ng-if="item.yn_use != 'Y'" ng-disabled="sending">
+                                <i class="glyphicon glyphicon-hourglass" ng-if="sending"></i>비활성
+                            </button>
+                            <button type="submit" class="btn btn-success" ng-if="item.yn_use == 'Y'" ng-disabled="sending">
+                                <i class="glyphicon glyphicon-hourglass" ng-if="sending"></i>활성
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                <tr ng-show="list.length == 0">
+                    <td colspan="4">자료가 없습니다.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

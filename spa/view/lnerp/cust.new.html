@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>신규 거래처</title>
+	<link rel="stylesheet" href="/spa/css/ons.css">
+	<link rel="stylesheet" href="/spa/css/jquery-ui.min.css">
+    <link rel="stylesheet" href="/spa/css/jquery-ui.theme.min.css">
+	<script src="/spa/lib/jquery.last.min.js"></script>
+	<script src="/spa/lib/jquery-ui.min.js"></script>
+    <script src="/spa/lib/jquery-ui.datepicker-ko.js"></script>
+	<script src="/spa/lib/placeholders.min.js"></script>
+	<script src="/spa/lib/knockout.min.js"></script>
+	<script src="/spa/js/viewmodel.js"></script>
+	<script src="/spa/js/lnerp/cust.new.js"></script>
+	<!--[if lte IE 7 ]>
+	<script src="/spa/lib/border-box.js"></script>
+	<![endif]-->
+</head>
+<body class="page">
+	<div class="container">
+	<h2 class="page-title"><strong>&gt; 라인넷</strong><span class="text-center">신규거래처 및 거래처 변경 요청 자료 생성</span></h2>
+
+	<div class="panel">
+		<h3 class="panel-title">거래처 등록 파일 업로드</h3>
+		<div class="panel-body">
+			<div id="panel_custErpUpload" data-view="">
+				<form class="search-form" action="/ctrl/lnerp/cust.erp.upload.jsp" method="post" enctype="multipart/form-data" target="upload_frame" data-bind="submit: onSubmitUpload">
+					<ul class="input-list inline">
+						<li class="input-list-item"><input type="file" name="erp_cust_excel"></li>
+					</ul>
+					<button type="submit" class="btn btn-w40" data-bind="disable: loading">업로드</button>
+					<button type="button" class="btn btn-w40" data-bind="click: onButtonClick, visible: loading">중지</button>
+				</form>
+
+				<iframe name="upload_frame" src="_blank.html" frameborder="0" class="upload-frame"></iframe>
+			</div>
+			<div id="panel_custErpUploadProgress" class="full-width">
+				<form class="hidden" action="/ctrl/lnerp/cust.erp.upload.progress.jsp" method="get"  data-bind="submit: onSubmit">
+				</form>
+				<div data-bind="visible: working">
+	            	<div class="progress-bar">
+	                	<div data-bind="style: {'width': progress() + '%'}"></div>
+	                </div>
+	                <b>작업중... </b> <span data-bind="text: workCurr"></span> / <span data-bind="text: workMax"></span> &nbsp; - 진행율: <!-- ko text: Math.floor(progress()) --><!-- /ko -->%
+                </div>
+                <a href="#" data-bind="click: function(e, vm){prop.showError( !prop.showError() );}">
+                	<!-- ko ifnot: prop.showError -->메시지 보이기<!-- /ko -->
+                	<!-- ko if: prop.showError -->메시지 숨기기<!-- /ko -->
+                	 (<!-- ko text: prop.error().length --><!-- /ko -->건)
+                </a>
+                <div data-bind="visible: prop.showError, foreach: prop.error">
+                	<div data-bind="text: $data"></div>
+                </div>
+			</div>
+		</div>
+	</div>
+
+	<div class="panel">
+		<h3 class="panel-title">거래처 변경 요청 파일 생성</h3>
+		<div class="panel-body">
+			<div id="panel_custDiffCheck" data-view="">
+				<form class="search-form" action="/ctrl/lnerp/cust.diff.check.jsp" method="get" data-bind="submit: onSubmit">
+					<ul class="input-list inline">
+						<li class="input-list-item">
+							<input type="text" name="yyyymm_use" class="datepicker" data-bind="value: prop.yyyymm_use">
+						</li>
+					</ul>
+					<button type="submit" class="btn btn-w60" data-bind="disable: loading">파일 생성</button>
+					<p>
+						※ 날짜 선택 시 연월만 적용 됩니다.
+					</p>
+				</form>
+				
+				<div data-bind="visible: loading">
+	            	<div class="progress-bar">
+	                	<div style="width: 100%"></div>
+	                </div>
+	                <b>작업중... </b>
+                </div>
+			</div>
+		</div>
+	</div>
+
+	<div class="panel">
+		<h3 class="panel-title">거래처 변경 요청 파일 목록</h3>
+		<div class="panel-body">
+			<div id="panel_custDiffList" data-view="">
+				<form action="/ctrl/lnerp/cust.diff.list.jsp" class="search-form" data-bind="submit: onSubmit">
+					<div class="hidden">
+						<input type="text" data-bind="value: page">
+					</div>
+					
+					<button type="submit" class="btn btn-w40" data-bind="disable: loading">조회</button>
+				</form>
+				<div class="spread spread-line10">
+					<table>
+						<thead>
+							<tr>
+								<th>생성일</th>
+								<th>가맹점 개수</th>
+								<th>다운로드</th>
+							</tr>
+						</thead>
+						<tbody data-bind="foreach: list">
+							<tr data-bind="click: $parent.onRowSelect">
+								<td data-bind="text: dt_insert"></td>
+								<td data-bind="text: cust_count"></td>
+								<td>
+									<!-- ko if: file_name -->
+									<a data-bind="attr: {'href': '/ctrl/lnerp/excel.download.jsp?file=' + file_name}">&#9712; 다운로드</a>
+									<!-- /ko -->
+								</td>
+							</tr>
+						</tbody>
+						<tbody data-bind="visible: !loading() && list().length == 0">
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                <!-- ko if: aleadySearch -->
+                                검색 결과가 없습니다.<!-- /ko -->
+                                <!-- ko ifnot: aleadySearch -->
+                                자료를 '조회' 하십시오. <!-- /ko -->
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody data-bind="visible: loading">
+                            <tr>
+                                <td colspan="6" class="text-center">Now Loading...</td>
+                            </tr>
+                        </tbody>
+					</table>
+				</div>
+				<div class="paging-wrap text-center">
+                    <div>
+                        <a href="#" data-bind="click: onPrevClick"><span class="icon icon-arrow-left"></span>이전</a>
+                        <!-- ko foreach: paging -->
+                        <!-- ko if: ($parent.page() == $data) -->
+                        <strong class="selected">[<!-- ko text: $data --><!-- /ko -->]</strong>
+                        <!-- /ko -->
+                        <!-- ko if: ($parent.page() != $data) -->
+                        <a href="#" data-bind="click: $parent.onPageClick">[<!-- ko text: $data --><!-- /ko -->]</a>
+                        <!-- /ko -->
+                        <!-- /ko -->
+                        <a href="#" data-bind="click: onNextClick">다음<span class="icon icon-arrow-right"></span></a>
+                    </div>
+                    <span class="abs-right">총: <span data-bind="text: totalcount"></span> 건</span>
+                    
+                </div>
+			</div><!-- // #panel_custDiffList -->
+		</div>
+	</div>
+
+	<div class="panel">
+		<h3 class="panel-title">신규 거래처 추출 및 이메일 동기화</h3>
+		<div class="panel-body">
+			<div id="panel_custNewToTmp" data-view="">
+				<form class="search-form" action="/ctrl/lnerp/cust.new.to.tmp.jsp" method="get" data-bind="submit: onSubmit">
+					<ul class="input-list inline">
+						<li class="input-list-item">
+							<input class="datepicker" type="text" name="yyyymm_use" data-bind="value: prop.yyyymm_use">
+						</li>
+					</ul>
+					<button type="submit" class="btn btn-w60" data-bind="disable: loading">작업 시작</button>
+					<button type="button" class="btn btn-w60" data-bind="visible: loading(), click: onButtonClick">중지</button>
+					<p>
+						※ 날짜 선택 시 연월만 적용 됩니다.
+					</p>
+				</form>
+			</div>
+			<div id="panel_custNewNoEmailList" data-view="">
+				<form action="/ctrl/lnerp/cust.new.no.email.list.jsp" class="hidden">
+				</form>
+			</div>
+			<div id="panel_custEmailSync" data-view="">
+				<form action="/ctrl/lnerp/cust.email.sync.jsp" class="hidden">
+					<!-- <input type="text" name="id_custs" data-bind="value: prop.id_custs"> -->
+				</form>
+				<div data-bind="visible: working">
+	            	<div class="progress-bar">
+	                	<div data-bind="style: {'width': progress() + '%'}"></div>
+	                </div>
+	                <b>작업중... </b> <span data-bind="text: workCurr"></span> / <span data-bind="text: workMax"></span> &nbsp; | 오류(<!-- ko text: workErr --><!-- /ko -->) - 진행율: <!-- ko text: Math.floor(progress()) --><!-- /ko -->%
+                </div>
+			</div>
+		</div>
+	</div>
+
+	<div class="panel">
+		<h3 class="panel-title">신규 거래처 엑셀 파일 생성</h3>
+		<div class="panel-body">
+			<div id="panel_custNewCreate" data-view="">
+				<form class="search-form" action="/ctrl/lnerp/cust.new.create.jsp" method="get" data-bind="submit: onSubmit">
+					<ul class="input-list inline">
+						<li class="input-list-item">
+							<input type="text" name="date" class="datepicker" data-bind="value: prop.date">
+						</li>
+					</ul>
+					<button type="submit" class="btn btn-w60" data-bind="disable: loading">파일 생성</button>
+					<p>
+						※ 날짜 선택 시 연월만 적용 됩니다.
+					</p>
+				</form>
+			</div>
+			<div id="panel_custNewCreateProgress" class="full-width">
+				<form class="hidden" action="/ctrl/lnerp/cust.erp.upload.progress.jsp" method="get"  data-bind="submit: onSubmit">
+				</form>
+				<div data-bind="visible: working">
+	            	<div class="progress-bar">
+	                	<div data-bind="style: {'width': progress() + '%'}"></div>
+	                </div>
+	                <b>작업중... </b> <span data-bind="text: workCurr"></span> / <span data-bind="text: workMax"></span> &nbsp; | 오류(<!-- ko text: workErr --><!-- /ko -->) - 진행율: <!-- ko text: Math.floor(progress()) --><!-- /ko -->%
+                </div>
+			</div>
+		</div>
+	</div>
+
+	<div class="panel">
+		<h3 class="panel-title">신규 거래처 파일 목록</h3>
+		<div class="panel-body">
+			<div id="panel_custNewList" data-view="">
+				<form action="/ctrl/lnerp/cust.new.list.jsp" class="search-form" data-bind="submit: onSubmit">
+					<div class="hidden">
+						<input type="text" data-bind="value: page">
+					</div>
+					
+					<button type="submit" class="btn btn-w40" data-bind="disable: loading">조회</button>
+				</form>
+				<div class="spread spread-line10">
+					<table>
+						<thead>
+							<tr>
+								<th>생성일</th>
+								<th>거래처 개수</th>
+								<th>다운로드</th>
+							</tr>
+						</thead>
+						<tbody data-bind="foreach: list">
+							<tr data-bind="click: $parent.onRowSelect">
+								<td data-bind="text: dt_insert"></td>
+								<td data-bind="text: cust_count"></td>
+								<td>
+									<!-- ko if: file_name -->
+									<a data-bind="attr: {'href': '/ctrl/lnerp/excel.download.jsp?file=' + file_name}">&#9712; 다운로드</a>
+									<!-- /ko -->
+								</td>
+							</tr>
+						</tbody>
+						<tbody data-bind="visible: !loading() && list().length == 0">
+                            <tr>
+                                <td colspan="6" class="text-center">
+                                <!-- ko if: aleadySearch -->
+                                검색 결과가 없습니다.<!-- /ko -->
+                                <!-- ko ifnot: aleadySearch -->
+                                자료를 '조회' 하십시오. <!-- /ko -->
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody data-bind="visible: loading">
+                            <tr>
+                                <td colspan="6" class="text-center">Now Loading...</td>
+                            </tr>
+                        </tbody>
+					</table>
+				</div>
+				<div class="paging-wrap text-center">
+                    <div>
+                        <a href="#" data-bind="click: onPrevClick"><span class="icon icon-arrow-left"></span>이전</a>
+                        <!-- ko foreach: paging -->
+                        <!-- ko if: ($parent.page() == $data) -->
+                        <strong class="selected">[<!-- ko text: $data --><!-- /ko -->]</strong>
+                        <!-- /ko -->
+                        <!-- ko if: ($parent.page() != $data) -->
+                        <a href="#" data-bind="click: $parent.onPageClick">[<!-- ko text: $data --><!-- /ko -->]</a>
+                        <!-- /ko -->
+                        <!-- /ko -->
+                        <a href="#" data-bind="click: onNextClick">다음<span class="icon icon-arrow-right"></span></a>
+                    </div>
+                    <span class="abs-right">총: <span data-bind="text: totalcount"></span> 건</span>
+                    
+                </div>
+			</div><!-- // #panel_custNewList -->
+		</div>
+	</div>
+
+	</div><!-- .container -->
+</body>
+</html>

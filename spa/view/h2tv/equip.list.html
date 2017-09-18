@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>H2TV - 장비관리 목록</title>
+	<link rel="stylesheet" href="/spa/css/ons.css">
+	<script src="/spa/lib/jquery.last.min.js"></script>
+	<script src="/spa/lib/placeholders.min.js"></script>
+	<script src="/spa/lib/knockout.min.js"></script>
+	<script src="/spa/js/viewmodel.js"></script>
+	<script src="/spa/js/h2tv/equip.list.js"></script>
+</head>
+<body class="page">
+	<div class="container">
+		<h2 class="page-title"><strong>&gt; 장비관리(N)</strong><span class="text-center">H2TV 장비 리스트</span></h2>
+
+		
+
+		<div id="panel_h2tvEquipList" data-view="" class="panel panel-equip-list">
+			<h3 class="panel-title">장비 목록</h3>
+			<div class="panel-body">
+				<div class="full-width">
+					<form class="search-form" action="/ctrl/h2tv/equip.list.jsp" data-need-selected="no" data-bind="submit: onSubmit">
+
+						<input type="text" name="no_serial" placeholder="관리번호" data-bind="value: prop.no_serial">
+						<input type="text" name="mac" placeholder="MAC" data-bind="value: prop.mac">
+						<select name="have_type" data-bind="value: prop.have_type">
+							<option value="">모두</option>
+							<option value="0">본사</option>
+							<option value="1">지사</option>
+							<option value="2">가맹점</option>
+						</select>
+						<input type="text" name="id_nm_cust" placeholder="가맹점" data-bind="value: prop.id_nm_cust">
+						<input type="text" name="id_nm_corp" placeholder="지사" data-bind="value: prop.id_nm_corp">
+						<select name="count" data-bind="value: count">
+							<option value="10">10개</option>
+							<option value="20">20개</option>
+							<option value="30">30개</option>
+						</select>
+						<button type="submit" class="btn btn-w60">조회</button>
+					</form>
+					<div class="">
+						<div class="spread spread-line6">
+							<table>
+								<colgroup></colgroup>
+								<thead>
+									<tr>
+										<th>장비번호</th>
+										<th>관리번호</th>
+										<th>MAC</th>
+										<th>소유주</th>
+										<th>가맹점</th>
+										<th>지사</th>
+										<th>종류</th>
+										<th>일자</th>
+									</tr>
+								</thead>
+								<tbody data-bind="foreach: list">
+									<tr>
+										<td data-bind="text: id_equip"></td>
+										<td data-bind="text: no_serial"></td>
+										<td data-bind="text: mac"></td>
+										<td data-bind="text: owner"></td>
+										<td data-bind="text: nm_cust"></td>
+										<td data-bind="text: nm_corp"></td>
+										<td data-bind="text: equip_type"></td>
+										<td data-bind="text: dt_insert"></td>
+									</tr>
+								</tbody>
+								<tbody data-bind="visible: !loading() && list().length == 0">
+									<tr>
+										<td colspan="8" class="text-center">
+										<!-- ko if: aleadySearch -->
+                                        검색 결과가 없습니다.<!-- /ko -->
+                                        <!-- ko ifnot: aleadySearch -->
+                                        자료를 '조회' 하십시오. <!-- /ko -->
+										</td>
+									</tr>
+								</tbody>
+								<tbody data-bind="visible: loading">
+									<tr>
+										<td colspan="8" class="text-center">Now Loading ...</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div class="text-right">
+						<a class="btn btn-w60" data-bind="attr: {href: '/ctrl/h2tv/equip.list.excel.jsp' + 
+						excelDownParams()
+						}">엑셀</a>
+					</div>
+
+					<div class="paging-wrap text-center">
+	                    <div>
+	                        <a href="#" data-bind="click: onPrevClick"><span class="icon icon-arrow-left"></span>이전</a>
+	                        <!-- ko foreach: paging -->
+	                        <!-- ko if: ($parent.page() == $data) -->
+	                        <strong class="selected">[<!-- ko text: $data --><!-- /ko -->]</strong>
+	                        <!-- /ko -->
+	                        <!-- ko if: ($parent.page() != $data) -->
+	                        <a href="#" data-bind="click: $parent.onPageClick">[<!-- ko text: $data --><!-- /ko -->]</a>
+	                        <!-- /ko -->
+	                        <!-- /ko -->
+	                        <a href="#" data-bind="click: onNextClick">다음<span class="icon icon-arrow-right"></span></a>
+	                    </div>
+	                    <span class="abs-right">전체: <span data-bind="text: totalcount"></span> 건</span>
+	                    
+	                </div>
+				</div>
+			</div>
+		</div><!-- #panel_h2tvEquipList -->
+
+
+		<div id="panel_h2tvEquipAdd" data-view="" class="panel">
+			<h3 class="panel-title">장비 등록</h3>
+			<div class="panel-body">
+				<div>
+					<form action="/ctrl/h2tv/equip.add.jsp" method="post" data-bind="submit: onSubmit">
+						<div class="row form-group">
+							<label class="col-1">관리번호</label>
+							<div class="col-3">
+								<input class="form-control" type="text" name="no_serial" id="" data-bind="value: prop.no_serial">
+							</div>
+						</div>
+						<div class="row form-group">
+							<label class="col-1">MAC주소</label>
+							<div class="col-3">
+								<input class="form-control" type="text" name="mac" id="" data-bind="value: prop.mac">
+							</div>
+						</div>
+						<div class="row form-group">
+							<label class="col-1">종류</label>
+							<div class="col-3">
+								<select name="equip_type" class="form-control" data-bind="value: prop.equip_type">
+									<option value="ASTB">ASTB</option>
+									<option value="STB">STB</option>
+								</select>
+								<div class="text-right">
+									<button type="submit" class="btn btn-w40">등록</button>
+								</div>
+							</div>
+						</div>
+						<div class="clearfix"></div>
+					</form>
+				</div>
+					
+			</div>
+		</div><!-- #panel_h2tvEquipAdd -->
+
+		<div id="panel_h2tvEquipAddExcel" data-view="" class="panel">
+			<h3 class="panel-title">장비 등록 - 엑셀</h3>
+			<div class="panel-body">
+				<h4>※ 업로드 파일 사용에 대한 안내</h4>
+				<p>
+				- 업로드될 엑셀 파일 내 자료는 아래와 같은 항목으로 머리열(Column Head, Field Name)이 함께 기록되어 있어야 합니다.<br>
+				- 또 한 첫번째 시트의 첫번째 행부터 기록되어야 합니다. <br>
+				- 관리번호와 MAC주소는 기존에 등록된 것과 중복되면 등록되지 않습니다.
+				</p>
+				<div class="excel-example">
+					<h6>예시</h6>
+					<table class="table-excel-example">
+						<tr>
+							<th>관리번호</th>
+							<th>MAC주소</th>
+							<th>종류</th>
+						</tr>
+						<tr>
+							<td>...</td>
+							<td><br></td>
+							<td><br></td>
+						</tr>
+					</table>
+				</div>
+				<form action="/ctrl/h2tv/equip.add.excel.jsp" method="post" enctype="multipart/form-data" target="upload_frame" data-bind="submit: onSubmitUpload">
+					<input type="file" name="excel_file">
+					<button type="submit" class="btn btn-w60" data-bind="disable: loading">엑셀 등록</button>
+				</form>
+
+				<iframe name="upload_frame" src="_blank.html" frameborder="0" class="upload-frame"></iframe>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

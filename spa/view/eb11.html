@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <title>ONS - EB11 Process</title>
+        <link rel="stylesheet" type="text/css" href="/css/lib/jquery-ui.min.css"/>
+        <link rel="stylesheet" type="text/css" href="/css/ons_eb11.css"/>
+        <script src="/js/lib/jquery.last.min.js"></script>
+        <script src="/js/lib/knockout.min.js"></script>
+        <script src="/js/eb11.js"></script>
+    </head>
+    <body class="page">
+        <div>
+            <div>
+                <h1 class="hide">EB11</h1>
+                <h2 class="page-title"><strong>&gt; 금융결제신청</strong><span class="text-center">출금이체신청내역 확인/승인 (EB11)</span></h2>
+                
+                <form class="search-form" action="">
+                    <ul class="input-list inline">
+                        <li>
+                            <label>사업자</label>
+                            <select>
+                                <option value="0">제이웨이</option>
+                                <option value="1">제이웨이2</option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>지점</label>
+                            <select>
+                                <option value="0">한솔시스템</option>
+                                <option value="1">한틀시스템</option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>청구년월</label>
+                            <input type="text" class="datepicker input-dateym" value="2016-02"/> ~ 
+                            <input type="text" class="datepicker input-dateym" value="2016-02"/>
+                        </li>
+                        <li>
+                            <label>청구방법</label>
+                            <select>
+                                <option value="0">CMS</option>
+                                <option value="1">지로</option>
+                            </select>
+                        </li>
+                    </ul>
+                    <button type="submit" class="btn btn-w40">조회</button>
+                </form>
+            </div>
+            
+            <div id="panel_EB11_fileuploader" class="panel">
+                <h3 class="panel-title"><i></i><s>EB11 파일 등록</s><b></b></h3>
+                <div class="panel-body">
+                    <form class="input-form" action="EB11_FILE_UPLOAD.jsp" method="post" enctype="multipart/form-data">
+                        <label>파일명 : EB11</label>
+                        <input class="input-file" type="file" name="upload_file"/>
+                        <button type="submit" class="btn btn-w40">처리</button>
+                    </form>
+                </div>
+            </div>
+            
+            <iframe src="eb11_fileupload.html" class="hidden"></iframe>
+            
+            <div id="panel_EB11_fileList" class="panel">
+                <h3 class="panel-title"><i></i><s>EB11 파일 등록 현황</s><b></b></h3>
+                <div class="panel-body">
+                    <div class="full-width">
+                        <div class="">
+                            <div class="spread spread-line6">
+                            
+                                <table>
+                                    <colgroup>
+                                        <col style="width: 40px"/>
+                                        <col style="width: 80px"/>
+                                        <col style="width: 90px"/>
+                                        <col style="width: auto"/>
+                                        <col style="width: 110px"/>
+                                        <col style="width: 110px"/>
+                                        <col style="width: 100px"/>
+                                        
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th>번호</th>
+                                            <th>파일명</th>
+                                            <th>개수</th>
+                                            <th>승인</th>
+                                            <th>비승인</th>
+                                            <th>등록일시</th>
+                                            <th>EB12 다운로드</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind="foreach: list">
+                                        <tr data-bind="click: $parent.onRowSelect, attr: {'class': selected()? 'selected' : ''}">
+                                            <td data-bind="text: id_eb11"></td>
+                                            <td data-bind="text: nm_file"></td>
+                                            <td data-bind="text: cnt_data"></td>
+                                            <td data-bind="text: approved"></td>
+                                            <td data-bind="text: unapproved"></td>
+                                            <td data-bind="text: dt_insert"></td>
+                                            <td>
+                                                <!-- ko if: (state_download > 0) -->
+                                                <a href="">
+                                                <!-- ko if: (state_download == 1) -->다운로드<!-- /ko -->
+                                                <!-- ko if: (state_download == 2) -->완료<!-- /ko -->
+                                                </a>
+                                                <!-- /ko -->
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody class="hide">
+                                        <tr>
+                                            <td colspan="7" class="text-center" data-bind="visible: list().length == 0">등록 현황이 없습니다.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                               
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="clear"></div>
+                    <div class="col-15 paging-wrap text-center">
+                        <div>
+                            <a href="#" data-bind="click: onPrevClick"><span class="icon icon-arrow-left"></span>이전</a>
+                            <!-- ko foreach: paging -->
+                            <!-- ko if: ($parent.page() == $data) -->
+                            <strong class="selected">[<!-- ko text: $data --><!-- /ko -->]</strong>
+                            <!-- /ko -->
+                            <!-- ko if: ($parent.page() != $data) -->
+                            <a href="#" data-bind="click: $parent.onPageClick">[<!-- ko text: $data --><!-- /ko -->]</a>
+                            <!-- /ko -->
+                            <!-- /ko -->
+                            <a href="#" data-bind="click: onNextClick">다음<span class="icon icon-arrow-right"></span></a>
+                        </div>
+                        <span class="abs-right">전체: <span data-bind="text: totalcount"></span> 건</span>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div id="panel_EB11_fileDataList" class="panel">
+                <h3 class="panel-title"><i></i><s>EB11 승인 처리 내역</s><b></b></h3>
+                <div class="panel-body">
+                    <form action=""></form>
+                    <div class="full-width">
+                        <div class="">
+                            <div class="spread spread-line6">
+                                
+                                <table>
+                                    <colgroup>
+                                        <col style="width: 34px"/>
+                                        <col style="width: 80px"/>
+                                        <col style="width: 90px"/>
+                                        <col style="width: auto"/>
+                                        <col style="width: 110px"/>
+                                        <col style="width: 110px"/>
+                                        <col style="width: 80px"/>
+                                        
+                                    </colgroup>
+                                        <thead>
+                                            <tr>
+                                                <th>No.</th>
+                                                <th>신청일자</th>
+                                                <th>신청구분</th>
+                                                <th>납부자번호</th>
+                                                <th>은행코드</th>
+                                                <th>계좌번호</th>
+                                                <th>생년월일/사업자번호</th>
+                                                <th>선택</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody data-bind="foreach: list">
+                                            <tr data-bind="click: $parent.onRowSelect, css: {'selected' : selected()}">
+                                                <td data-bind="text: data_seq"></td>
+                                                <td data-bind="text: yymmdd_apply"></td>
+                                                <td>
+                                                    <!-- ko if: (gubun == 1) -->신규<!-- /ko -->
+                                                    <!-- ko if: (gubun == 3) -->해지<!-- /ko -->
+                                                    <!-- ko if: (gubun == 7) -->임의해지<!-- /ko -->
+                                                </td>
+                                                <td data-bind="text: id_acct"></td>
+                                                <td>
+                                                    <span data-bind="text: nm_bank"></span>(<span data-bind="text: cd_bank"></span>)
+                                                </td>
+                                                <td data-bind="text: no_acct"></td>
+                                                <td data-bind="text: ssn"></td>
+                                                <td>
+                                                    <!-- ko if: (state <= 1) -->
+                                                    <input type="checkbox" name="chk_approval" value="1" data-bind="checked: state == 1"/>
+                                                    <!-- /ko -->
+                                                    <!-- ko if: (state == 2) -->승인<!-- /ko -->
+                                                    <!-- ko if: (state == 9) -->비승인<!-- /ko -->
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="8" class="text-center" data-bind="visible: list().length == 0">처리 내역이 없습니다.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                               
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="clear"></div>
+                    <div class="col-15 paging-wrap text-center">
+                        <div>
+                            <a href="#" data-bind="click: onPrevClick"><span class="icon icon-arrow-left"></span>이전</a>
+                            <!-- ko foreach: paging -->
+                            <!-- ko if: ($parent.page() == $data) -->
+                            <strong class="selected">[<!-- ko text: $data --><!-- /ko -->]</strong>
+                            <!-- /ko -->
+                            <!-- ko if: ($parent.page() != $data) -->
+                            <a href="#" data-bind="click: $parent.onPageClick">[<!-- ko text: $data --><!-- /ko -->]</a>
+                            <!-- /ko -->
+                            <!-- /ko -->
+                            <a href="#" data-bind="click: onNextClick">다음<span class="icon icon-arrow-right"></span></a>
+                        </div>
+                        <span class="abs-right">전체: <span data-bind="text: totalcount"></span> 건</span>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </body>
+</html>

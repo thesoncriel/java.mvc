@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>지사 접속 허용 IP 설정</title>
+	<link rel="stylesheet" href="/spa/css/ons.css">
+	<script src="/spa/lib/jquery.last.min.js"></script>
+	<script src="/spa/lib/placeholders.min.js"></script>
+	<script src="/spa/lib/knockout.min.js"></script>
+	<script src="/spa/js/viewmodel-2.0.js"></script>
+	<script src="/spa/js/viewmodel.event.js"></script>
+	<script src="/spa/js/component.grid.js"></script>
+	<script src="/spa/js/component.pagination.js"></script>
+	<script src="/spa/js/corpmng/corp.list.js"></script>
+	<!--[if lte IE 7 ]>
+	<script src="/spa/lib/border-box.js"></script>
+	<![endif]-->
+</head>
+<body class="page">
+	<div class="container">
+	<h2 class="page-title"><strong>&gt; 지사 관리</strong><span class="text-center">접속 허용 IP 설정</span></h2>
+
+	<div class="row">
+		<div class="col-8">
+			<div class="panel">
+				<h3 class="panel-title">지사 목록</h3>
+				<div class="panel-body">
+					<div id="panel_corpList" class="full-width">
+						<form action="/ctrl/corpmng/corp.list.jsp" class="search-form" data-bind="submit: onSubmit">
+							<ul class="input-list inline">
+								<li class="input-list-item">
+									<input type="text" name="nm_corp" data-bind="value: prop.nm_corp" size="12" placeholder="지사명">
+								</li>
+								<li class="input-list-item">
+									<input type="text" name="nm_charger" data-bind="value: prop.nm_charger" size="12" placeholder="담당자명">
+								</li>
+								<li class="input-list-item">
+									<label for="">개수</label>
+									<select name="count" data-bind="value: count">
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="30">30</option>
+										<option value="40">40</option>
+										<option value="50">50</option>
+									</select>
+								</li>
+							</ul>
+							<button type="submit" class="btn btn-w40">조회</button>
+						</form>
+						<div data-bind="component: {name: 'grid', params: {
+							field: {id_login: '로그인ID', nm_corp: '지사명', nm_charger: '담당자명', tel: '연락처'},
+							css: {nm_corp: 'text-left'},
+							select: true,
+							list: list,
+							aleadySearch: aleadySearch,
+							loading: loading,
+							callback: callback} }"></div>
+						<div data-bind="component: {name: 'pagination', params: {
+							page: page, 
+							count: count, 
+							navCount: 5,
+							submit: submit,
+							callback: callback} }"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-7">
+			<div class="panel">
+				<h3 class="panel-title">허용 IP 목록</h3>
+				<div class="panel-body">
+					<div id="panel_corpIpDel" class="hidden">
+						<form action="/ctrl/corpmng/corp.ip.del.jsp">
+							<input type="hidden" name="id_corp" data-bind="value: prop.id_corp">
+							<input type="hidden" name="ip" data-bind="value: prop.ip">
+						</form>
+					</div>
+					<div id="panel_corpIpAdd" class="hidden">
+						<form action="/ctrl/corpmng/corp.ip.add.jsp">
+							<input type="hidden" name="id_corp" data-bind="value: prop.id_corp">
+							<input type="hidden" name="ip" data-bind="value: prop.ip">
+						</form>
+					</div>
+					<div id="panel_corpIpList" class="full-width">
+						<form action="/ctrl/corpmng/corp.ip.list.jsp" class="search-form" data-bind="submit: onSubmit">
+							<input type="hidden" name="id_corp" data-bind="value: prop.id_corp">
+							<p>
+								※ 좌측 지사를 검색하고 행을 선택하면 조회 됩니다.
+							</p>
+							<button type="submit" class="btn btn-w40 hidden" data-bind="disable: working">조회</button>
+						</form>
+						
+						<div data-bind="visible: working">
+			            	<div class="progress-bar">
+			                	<div></div>
+			                </div>
+			                <b>작업중... </b>
+		                </div>
+						<div data-bind="component: {name: 'grid', params: {
+							field: {ip: 'IP', mac: 'MAC', _allow: '', _del: ''},
+							list: list,
+							aleadySearch: aleadySearch,
+							loading: loading,
+							addButton: true,
+							callback: callback} }"></div>
+
+					</div><!-- .full-width -->
+
+				</div>
+			</div>
+		</div>
+	</div><!-- .row-->
+	<p>
+		※ 지사 연락처 추가/변경은 <strong>운영관리 &gt; 업체관리 &gt; 계역사별 업체 관리</strong> 에서 하실 수 있습니다.
+	</p>
+	</div><!-- .container -->
+</body>
+</html>

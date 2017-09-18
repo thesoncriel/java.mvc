@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>ONS - 등록요청 상세</title>
+	<link rel="stylesheet" href="/spa/css/ons.css">
+	<script src="/spa/lib/jquery.last.min.js"></script>
+	<script src="/spa/lib/knockout.min.js"></script>
+	<script src="/spa/js/viewmodel.js"></script>
+	<script src="/spa/js/custmng/regreq.dtl.js"></script>
+</head>
+<body class="page">
+	<div class="container"> 
+		<h2 class="page-title"><strong>&gt; 고객관리</strong><span class="text-center">가맹점 등록 요청</span></h2>
+
+		<div id="panel_custRegReqDtl" data-view="" class="panel">
+            <h3 class="panel-title">와우시네 등록 요청 상세</h3>
+            <div class="panel-body">
+                <div class="full-width">
+                	<form class="search-form hidden" action="/ctrl/custmng/regreq.dtl.jsp" data-bind="submit: onSubmit">
+                		<input type="text" name="id_reg_seq" data-bind="value: prop.id_reg_seq">
+	                    <!--<button type="submit" class="btn btn-w40">조회</button>-->
+	                </form>
+                    <div class="">
+                        <div class="spread spread-line6">                        
+                            <table>
+                                <tbody data-bind="with: detail">
+                                    <tr>
+                                        <th>가맹점명</th>
+                                        <td data-bind="text: nm_cust"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>사업자번호</th>
+                                        <td data-bind="text: ssn"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>대표자</th>
+                                        <td data-bind="text: nm_ceo"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>주유선 전화</th>
+                                        <td data-bind="text: tel_major"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>주 핸드폰</th>
+                                        <td data-bind="text: tel_hp"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>이메일</th>
+                                        <td data-bind="text: email"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>주소(지번)</th>
+                                        <td data-bind="text: addr1"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>주소(도로명)</th>
+                                        <td data-bind="text: addr2"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>관리점</th>
+                                        <td data-bind="text: nm_manage_corp"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>유치점</th>
+                                        <td data-bind="text: nm_uchicorp"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>유치사원명</th>
+                                        <td data-bind="text: nm_uchiman"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>상품명</th>
+                                        <td data-bind="text: nm_prod"></td>
+                                    </tr>
+                                    <tr>
+                                        <th rowspan="4">IP</th>
+                                        <td>
+                                            <!-- ko if: ip1_head -->
+                                            <span data-bind="text: ip1_head"></span>.<span data-bind="text: ip1_start"></span> ~ <span data-bind="text: ip1_end"></span>
+                                            <!-- /ko -->
+                                            <!-- ko ifnot: ip1_head -->
+                                            미설정
+                                            <!-- /ko -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <!-- ko if: ip2_head -->
+                                            <span data-bind="text: ip2_head"></span>.<span data-bind="text: ip2_start"></span> ~ <span data-bind="text: ip2_end"></span>
+                                            <!-- /ko -->
+                                            <!-- ko ifnot: ip2_head -->
+                                            미설정
+                                            <!-- /ko -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <!-- ko if: ip3_head -->
+                                            <span data-bind="text: ip3_head"></span>.<span data-bind="text: ip3_start"></span> ~ <span data-bind="text: ip3_end"></span>
+                                            <!-- /ko -->
+                                            <!-- ko ifnot: ip3_head -->
+                                            미설정
+                                            <!-- /ko -->
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            총 개수: <span data-bind="text: ip_cnt"></span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>특이사항</th>
+                                        <td data-bind="text: memo"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>계약서 사진</th>
+                                        <td>
+                                            <a data-bind="attr: {'href' : '/ctrl/custmng/regreq.img.jsp?id_reg_seq=' + id_reg_seq}" target="_blank">
+                                            <img src="" width="300" height="400" alt="별도 업로드 했을 경우만 보입니다." data-bind="attr: {'src': '/ctrl/custmng/regreq.img.jsp?id_reg_seq=' + id_reg_seq}">
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                           
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            
+        </div><!-- #panel_custSvcImgList -->
+	</div>
+</body>
+</html>

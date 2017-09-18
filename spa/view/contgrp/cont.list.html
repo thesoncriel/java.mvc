@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>컨텐츠 그룹 - 목록</title>
+	<link rel="stylesheet" href="/spa/css/ons.css">
+	<script src="/spa/lib/jquery.last.min.js"></script>
+	<script src="/spa/lib/placeholders.min.js"></script>
+	<script src="/spa/lib/knockout.min.js"></script>
+	<script src="/spa/js/viewmodel.js"></script>
+	<script src="/spa/js/contgrp/cont.list.js"></script>
+	<!--[if lte IE 7 ]>
+	<script src="/spa/lib/border-box.js"></script>
+	<![endif]-->
+</head>
+<body class="page">
+	<div class="container">
+	<h2 class="page-title"><strong>&gt; 컨텐츠 그룹</strong><span class="text-center">그룹 설정 및 적용</span></h2>
+
+	<div class="panel">
+		<h3 class="panel-title">그룹 설정 방법</h3>
+		<div class="panel-body">
+			<ul>
+				<li>* <strong>추가</strong>를 누르고 그룹명 작성 후 엔터(Enter) 입력</li>
+				<li>* 입력 중 취소는 esc</li>
+				<li>* 그룹명 수정은 그룹명을 더블 클릭 후 수정하고 엔터 입력.</li>
+			</ul>
+		</div>
+	</div>
+
+	
+	
+
+	<div class="row">
+		<div class="col-5">
+			<div class="panel">
+				<h3 class="panel-title">그룹 설정</h3>
+				<div class="panel-body">
+					<div id="panel_contgrpModify" class="hidden">
+						<form action="/ctrl/contgrp/contgrp.modify.jsp" method="post">
+							<input type="hidden" name="id_group" data-bind="value: prop.id_group">
+							<input type="hidden" name="group_name" data-bind="value: prop.group_name">
+						</form>
+					</div>
+					<div id="panel_contgrpList" class="full-width">
+						<form action="/ctrl/contgrp/contgrp.list.jsp" class="search-form" data-need-selected="yes" data-bind="submit: onSubmit">
+							<input type="hidden" name="page" data-bind="value: page">
+							<input type="hidden" name="count" data-bind="value: count">
+							<button type="submit" class="btn btn-w40">조회</button>
+						</form>
+						<div class="spread spread-line6">
+							<table>
+								<thead>
+									<tr>
+										<th>그룹명</th>
+									</tr>
+								</thead>
+								<tbody data-bind="foreach: list">
+									<tr data-bind="click: $parent.onRowSelect">
+										<td data-bind="event:{dblclick: $parent.onItemClick}">
+											<span data-bind="visible: !editing(), text: group_name"></span>
+											<input class="direct-editable" type="text" name="group_name" data-bind="visible: editing, value: group_name, event: {keypress: $parent.onItemEditing}">
+										</td>
+									</tr>
+								</tbody>
+								<tbody data-bind="visible: !loading() && list().length == 0">
+                                    <tr>
+                                        <td colspan="1" class="text-center">
+                                        <!-- ko if: aleadySearch -->
+                                        생성된 그룹이 없습니다.<!-- /ko -->
+                                        <!-- ko ifnot: aleadySearch -->
+                                        자료를 '조회' 하십시오. <!-- /ko -->
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody data-bind="visible: list().length < 30">
+									<tr>
+										<td>
+											<a href="#" class="btn block" data-bind="click: onButtonClick">&#10133; 추가</a>
+										</td>
+									</tr>
+								</tbody>
+                                <tbody data-bind="visible: loading">
+                                    <tr>
+                                        <td colspan="1" class="text-center">Now Loading ...</td>
+                                    </tr>
+                                </tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-10">
+
+			<div class="panel">
+				<h3 class="panel-title">컨텐츠 적용</h3>
+				<div class="panel-body">
+					<div id="panel_contApply" class="hidden">
+						<form action="/ctrl/contgrp/cont.apply.jsp" method="post">
+							<input type="hidden" name="id_contents" data-bind="value: prop.id_contents">
+							<input type="hidden" name="id_group" data-bind="value: prop.id_group">
+						</form>
+					</div>
+					<div id="panel_contApplyAll" class="hidden">
+						<form action="/ctrl/contgrp/cont.apply.all.jsp" method="post">
+						</form>
+					</div>
+					<div id="panel_contList" class="full-width">
+						<form action="/ctrl/contgrp/cont.list.jsp" class="search-form" data-multi-selected="yes" data-bind="submit: onSubmit">
+							
+							<ul class="input-list inline">
+								<li class="input-list-item">
+									<input type="text" name="id_contents" data-bind="value: prop.id_contents" size="12" placeholder="컨텐츠ID">
+								</li>
+								<li class="input-list-item">
+									<input type="text" name="title" data-bind="value: prop.title" size="12" placeholder="제목">
+								</li>
+								<li class="input-list-item">
+									<input type="text" name="nm_cust" data-bind="value: prop.nm_cust" size="12" placeholder="제공사">
+								</li>
+								<li class="input-list-item">
+									<label for="">개수</label>
+									<select name="count" data-bind="value: count">
+										<option value="10">10</option>
+										<option value="20">20</option>
+										<option value="30">30</option>
+										<option value="40">40</option>
+										<option value="50">50</option>
+										<option value="100">100</option>
+									</select>
+								</li>
+							</ul>
+							<button type="submit" class="btn btn-w40" data-bind="disable: working">조회</button>
+							<div>
+								<button type="button" class="btn btn-w60" data-type="select" data-bind="click: onAllSelect, disable: working">모두선택</button>
+								<button type="button" class="btn btn-w60" data-type="deselect" data-bind="click: onAllSelect, disable: working">모두해제</button>
+							</div>
+						</form>
+						
+						<div data-bind="visible: working">
+			            	<div class="progress-bar">
+			                	<div></div>
+			                </div>
+			                <b>작업중... </b>
+		                </div>
+						<div class="spread spread-line10">
+							<table>
+								<thead>
+									<tr>
+										<th>시리즈ID</th>
+										<th>컨텐츠ID</th>
+										<th>제목</th>
+										<th>제공사</th>
+										<th>bit-rate</th>
+										<th>그룹 정보</th>
+									</tr>
+								</thead>
+								<tbody data-bind="foreach: list">
+									<tr data-bind="click: $parent.onRowSelect, attr: {'class': selected()? 'selected' : ''}">
+										<td data-bind="text: id_series"></td>
+										<td data-bind="text: id_contents"></td>
+										<td data-bind="text: title"></td>
+										<td data-bind="text: nm_cust"></td>
+										<td data-bind="text: bit_rate"></td>
+										<td>
+											<button type="button" class="btn btn-w60" data-bind="click: $parent.onButtonClick">보기</button>
+										</td>
+									</tr>
+								</tbody>
+								<tbody data-bind="visible: !loading() && list().length == 0">
+                                    <tr>
+                                        <td colspan="6" class="text-center">
+                                        <!-- ko if: aleadySearch -->
+                                        검색 결과가 없습니다.<!-- /ko -->
+                                        <!-- ko ifnot: aleadySearch -->
+                                        자료를 '조회' 하십시오. <!-- /ko -->
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody data-bind="visible: loading">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Now Loading...</td>
+                                    </tr>
+                                </tbody>
+							</table>
+						</div>
+						<div class="paging-wrap text-center">
+		                    <div>
+		                        <a href="#" data-bind="click: onPrevClick"><span class="icon icon-arrow-left"></span>이전</a>
+		                        <!-- ko foreach: paging -->
+		                        <!-- ko if: ($parent.page() == $data) -->
+		                        <strong class="selected">[<!-- ko text: $data --><!-- /ko -->]</strong>
+		                        <!-- /ko -->
+		                        <!-- ko if: ($parent.page() != $data) -->
+		                        <a href="#" data-bind="click: $parent.onPageClick">[<!-- ko text: $data --><!-- /ko -->]</a>
+		                        <!-- /ko -->
+		                        <!-- /ko -->
+		                        <a href="#" data-bind="click: onNextClick">다음<span class="icon icon-arrow-right"></span></a>
+		                    </div>
+		                    <span class="abs-right">총: <span data-bind="text: totalcount"></span> 건</span>
+		                    
+		                </div>
+		                <div>
+		                	<button type="button" class="btn btn-w60" data-type="select" data-bind="click: onAllSelect, disable: working">모두선택</button>
+							<button type="button" class="btn btn-w60" data-type="deselect" data-bind="click: onAllSelect, disable: working">모두해제</button>
+							<div data-bind="visible: working">
+				            	<div class="progress-bar">
+				                	<div></div>
+				                </div>
+				                <b>작업중... </b>
+			                </div>
+		                </div>
+					</div><!-- .full-width -->
+
+				</div>
+			</div>
+		</div>
+	</div><!-- .row-->
+	</div><!-- .container -->
+</body>
+</html>

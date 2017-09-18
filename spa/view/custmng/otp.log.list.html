@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>ONS - OTP 발급 기록</title>
+	<link rel="stylesheet" href="/spa/css/ons.css">
+    <link rel="stylesheet" href="/spa/css/jquery-ui.min.css">
+    <link rel="stylesheet" href="/spa/css/jquery-ui.theme.min.css">
+	<script src="/spa/lib/jquery.last.min.js"></script>
+    <script src="/spa/lib/jquery-ui.min.js"></script>
+    <script src="/spa/lib/jquery-ui.datepicker-ko.js"></script>
+	<script src="/spa/lib/knockout.min.js"></script>
+	<script src="/spa/js/viewmodel.js"></script>
+	<script src="/spa/js/custmng/otp.log.list.js"></script>
+</head>
+<body class="page">
+	<div class="container"> 
+		<h2 class="page-title"><strong>&gt; 고객관리</strong><span class="text-center">OTP 발급 기록 조회</span></h2>
+
+		<div id="panel_otpLogList" data-view="" class="panel">
+            <h3 class="panel-title">검색 결과</h3>
+            <div class="panel-body">
+				<div class="full-width">
+                	<form class="search-form" action="/ctrl/custmng/otp.log.list.jsp" data-need-selected="no" data-bind="submit: onSubmit">
+                        <input type="text" name="dt_start" class="datepicker" data-bind="value: prop.dt_start">
+                        <input type="text" name="dt_end" class="datepicker" data-bind="value: prop.dt_end">
+                        개수
+                		<select name="count" data-bind="value: count">
+                            <option value="20">20</option>
+                            <option value="40">40</option>
+                            <option value="60">60</option>
+                            <option value="80">80</option>
+                            <option value="100">100</option>      
+                        </select>
+	                    
+	                    <button type="submit" class="btn btn-w40">조회</button>
+	                </form>
+                    <div class="">
+                        <div class="spread spread-line6">
+                        
+                            <table>
+                                <colgroup>
+                                    <!-- <col style="width: 40px"/>
+                                    <col style="width: 80px"/>
+                                    <col style="width: 90px"/>
+                                    <col style="width: auto"/>
+                                    <col style="width: 110px"/>
+                                    <col style="width: 110px"/>
+                                    <col style="width: 100px"/> -->
+                                    
+                                </colgroup>
+                                <thead>
+                                    <tr>
+	                                    <th>가맹점번호</th>
+	                                    <th>가맹점명</th>
+	                                    <th>발급개수</th>
+                                        <th>발급일</th>
+                                        <th>발급자</th>
+                                        <th>출처</th>
+                                        <th>발급사유</th>
+                                    </tr>
+                                </thead>
+                                <tbody data-bind="foreach: list">
+                                    <tr data-bind="click: $parent.onRowSelect">
+                                        <td data-bind="text: id_cust"></td>
+										<td data-bind="text: nm_cust"></td>
+										<td data-bind="text: num_otp"></td>
+                                        <td data-bind="text: dt_insert"></td>
+                                        <td data-bind="text: nm_insert"></td>
+                                        <td data-bind="text: work_type_name"></td>
+                                        <td data-bind="text: desc_otp" class="text-left"></td>
+                                    </tr>
+                                </tbody>
+                                <tbody data-bind="visible: !loading() && list().length == 0">
+                                    <tr>
+                                        <td colspan="7" class="text-center">
+                                        <!-- ko if: aleadySearch -->
+                                        검색 결과가 없습니다.<!-- /ko -->
+                                        <!-- ko ifnot: aleadySearch -->
+                                        자료를 '조회' 하십시오. <!-- /ko -->
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tbody data-bind="visible: loading">
+                                    <tr>
+                                        <td colspan="7" class="text-center">Now Loading ...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                           
+                        </div>
+                    </div>
+                    
+					<div class="paging-wrap text-center">
+	                    <div>
+	                        <a href="#" data-bind="click: onPrevClick"><span class="icon icon-arrow-left"></span>이전</a>
+	                        <!-- ko foreach: paging -->
+	                        <!-- ko if: ($parent.page() == $data) -->
+	                        <strong class="selected">[<!-- ko text: $data --><!-- /ko -->]</strong>
+	                        <!-- /ko -->
+	                        <!-- ko if: ($parent.page() != $data) -->
+	                        <a href="#" data-bind="click: $parent.onPageClick">[<!-- ko text: $data --><!-- /ko -->]</a>
+	                        <!-- /ko -->
+	                        <!-- /ko -->
+	                        <a href="#" data-bind="click: onNextClick">다음<span class="icon icon-arrow-right"></span></a>
+	                    </div>
+	                    <span class="abs-right">전체: <span data-bind="text: totalcount"></span> 건</span>
+	                    
+	                </div>
+
+                </div>
+            </div>
+            
+        </div><!-- #panel_custSvcImgList -->
+	</div>
+</body>
+</html>

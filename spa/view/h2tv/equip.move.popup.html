@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8">
+	<title>H2TV - 가맹점 할당</title>
+	<link rel="stylesheet" href="/spa/css/ons.css">
+	<script src="/spa/lib/jquery.last.min.js"></script>
+	<script src="/spa/lib/knockout.min.js"></script>
+	<script src="/spa/js/viewmodel.js"></script>
+	<script src="/spa/js/h2tv/equip.move.js"></script>
+</head>
+<body class="page">
+	<div class="container">
+		<h2 class="page-title"><strong>&gt; 고객관리</strong><span class="text-center">H2TV 가맹점 할당 관리</span></h2>
+
+		<div id="panel_h2tvEquipCustList" data-view="" class="panel">
+			<h3 class="panel-title">가맹점 장비</h3>
+			<div class="panel-body">
+				<div class="full-width">
+					<form class="search-form hidden" action="/ctrl/h2tv/equip.own.list.jsp" data-need-selected="yes" data-bind="submit: onSubmit">
+						<input type="hidden" name="id_cust" data-bind="value: prop.id_cust">
+						<input type="hidden" name="count" value="1000">
+					</form>
+					<div class="">
+						<div class="spread spread-line6">
+							<table>
+								<colgroup></colgroup>
+								<thead>
+									<tr>
+										<th>장비번호</th>
+										<th>관리번호</th>
+										<th>MAC</th>
+										<th>종류</th>
+										<th>채널</th>
+									</tr>
+								</thead>
+								<tbody data-bind="foreach: list">
+									<tr>
+										<td data-bind="text: id_equip"></td>
+										<td data-bind="text: no_serial"></td>
+										<td data-bind="text: mac"></td>
+										<td data-bind="text: equip_type"></td>
+										<td>
+											<select name="no_brod" data-bind="value: no_brod, event: {change: $parent.onItemChange}">
+												<option value="1">1</option>
+												<option value="2">2</option>
+											</select>
+										</td>
+									</tr>
+								</tbody>
+								<tbody data-bind="visible: list.length">
+									<tr>
+										<td colspan="5" class="text-center">할당된 장비가 존재하지 않습니다.</td>
+									</tr>
+								</tbody>
+								<tbody data-bind="visible: loading">
+									<tr>
+										<td colspan="5" class="text-center">Now Loading ...</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!-- #panel_h2tvEquipCustList -->
+
+
+
+		<div id="panel_h2tvEquipMove">
+			<div class="text-right">
+				<button type="button" class="btn btn-w40" data-bind="click: onButtonClick">▲</button>
+				<button type="button" class="btn btn-w40" data-bind="click: onButtonClick">▼</button>
+			</div>
+		</div>
+
+		<div id="panel_h2tvEquipCorpList" data-view="" class="panel">
+			<h3 class="panel-title">지사 장비</h3>
+			<div class="panel-body">
+				<div class="full-width">
+					<form class="search-form hidden" action="/ctrl/h2tv/equip.own.list.jsp" data-need-selected="yes" data-bind="submit: onSubmit">
+					</form>
+					<div class="">
+						<div class="spread spread-line6">
+							<table>
+								<colgroup></colgroup>
+								<thead>
+									<tr>
+										<th>장비번호</th>
+										<th>관리번호</th>
+										<th>MAC</th>
+										<th>종류</th>
+									</tr>
+								</thead>
+								<tbody data-bind="foreach: list">
+									<tr>
+										<td data-bind="text: id_equip"></td>
+										<td data-bind="text: no_serial"></td>
+										<td data-bind="text: mac"></td>
+										<td data-bind="text: equip_type"></td>
+									</tr>
+								</tbody>
+								<tbody data-bind="visible: list.length">
+									<tr>
+										<td colspan="4" class="text-center">소유된 장비가 존재하지 않습니다.</td>
+									</tr>
+								</tbody>
+								<tbody data-bind="visible: loading">
+									<tr>
+										<td colspan="4" class="text-center">Now Loading ...</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+
+					<div class="paging-wrap text-center">
+	                    <div>
+	                        <a href="#" data-bind="click: onPrevClick"><span class="icon icon-arrow-left"></span>이전</a>
+	                        <!-- ko foreach: paging -->
+	                        <!-- ko if: ($parent.page() == $data) -->
+	                        <strong class="selected">[<!-- ko text: $data --><!-- /ko -->]</strong>
+	                        <!-- /ko -->
+	                        <!-- ko if: ($parent.page() != $data) -->
+	                        <a href="#" data-bind="click: $parent.onPageClick">[<!-- ko text: $data --><!-- /ko -->]</a>
+	                        <!-- /ko -->
+	                        <!-- /ko -->
+	                        <a href="#" data-bind="click: onNextClick">다음<span class="icon icon-arrow-right"></span></a>
+	                    </div>
+	                    <span class="abs-right">전체: <span data-bind="text: totalcount"></span> 건</span>
+	                    
+	                </div>
+				</div>
+			</div>
+		</div><!-- #panel_h2tvEquipCorpList -->
+
+		<div id="panel_h2tvClientEnable" data-view="" class="hidden">
+			<form action="/ctrl/h2tv/client.enable.jsp" data-submit="onSubmit">
+				<input type="hidden" name="id_client">
+			</form>
+		</div>
+
+		<div id="panel_h2tvClientAdd" data-view="" class="panel">
+			<h3 class="panel-title">Client 등록</h3>
+			<div class="panel-body">
+				<form class="form-inline" action="/ctrl/h2tv/client.add.jsp" method="post" data-bind="submit: onSubmit">
+					<input type="text" name="id_cust" class="hidden" data-bind="value: prop.id_cust">
+					<div class="row">
+						<div class="form-group col-6">
+							<label for="text_clientMac">MAC 주소</label>
+							<input class="form-control" type="text" name="client_mac" id="text_clientMac" data-bind="value: prop.client_mac">
+							<input type="hidden" name="confirmed" data-bind="value: prop.confirmed">
+						</div>
+						<div class="col-6">
+							<button type="submit" class="btn btn-w60">등록</button>
+						</div>
+					</div>
+					<div class="clearfix"></div>
+				</form>
+			</div>
+		</div><!-- #panel_h2tvClientAdd -->
+	</div>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<div ng-controller="H2tvEquipList">
+	<ol class="breadcrumb">
+        <li class="active">반납목록</li>
+    </ol>
+	<form name="form_H2tvEquipList" action="/ctrl/h2tv/equip.trans.list.ret.jsp" class="form-inline text-right equip-search" ng-asyncform="auto" param="param">
+		<div class="btn-group">
+    		<a href="#" class="btn btn-default" ng-click="status.p20 = !status.p20" ng-class="{'btn-primary': status.p20}">배송</a>
+    		<a href="#" class="btn btn-default" ng-click="status.p30 = !status.p30" ng-class="{'btn-primary': status.p30}">완료</a>
+    		<a href="#" class="btn btn-default" ng-click="status.p90 = !status.p90" ng-class="{'btn-primary': status.p90}">취소</a>
+    	</div>
+	</form>
+
+	<div ng-show="loading">
+        <strong class="text-info">Now Loading...</strong>
+        <div class="progress">
+          <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+            <span class="sr-only"></span>
+          </div>
+        </div>
+    </div>
+
+	<!-- 지사용 -->
+    <!-- <table class="table table-striped">
+    	<thead>
+    		<tr>
+    			<th>송장번호</th>
+    			<th>지사</th>
+    			<th>진행</th>
+    			<th>일자</th>
+    		</tr>
+    	</thead>
+    	<tbody>
+    		<tr ng-repeat="item in list" uib-popover="{{item.reason}}" popover-title="요청사유">
+    			<td>{{item.no_delivery}}</td>
+    			<td>{{item.nm_corp}}</td>
+    			<td>{{item.status_name}}</td>
+    			<td>{{item.dt_insert | date: "MM월dd일"}}</td>
+    		</tr>
+    		<tr ng-show="list.length == 0">
+                <td colspan="4">요청 내역이 존재하지 않습니다.</td>
+            </tr>
+    	</tbody>
+    </table> -->
+
+	<div class="">
+		<ul class="list-group" ng-repeat="item in list">
+			<li class="list-group-item" ng-class="{
+				'list-group-item-warning': item.status == 10,
+				'list-group-item-info': item.status == 20,
+				'list-group-item-success': item.status == 30,
+				'list-group-item-danger': item.status == 90
+			}">
+				<div class="row">
+					<div class="col-xs-3 col-sm-2">
+						<a ng-href="http://www.ilogen.com/iLOGEN.Web.New/TRACE/TraceView.aspx?gubun=slipno&slipno={{item.no_delivery}}" target="equip_trans_delivery">{{item.no_delivery}}</a>
+					</div>
+					<div class="col-xs-3 col-sm-2">{{item.nm_corp_from}} <span class="badge">{{item.trans_cnt}}</span></div>
+					<div class="col-xs-3 col-sm-2 col-lg-1">{{item.status_name}}</div>
+					<div class="col-xs-3 col-sm-2 col-lg-2">{{item.dt_insert | date: "MM월dd일"}}</div>
+				</div>
+			</li>
+			<li class="list-group-item">
+				<div class="row">
+					<p class="col-sm-9">{{item.notice}}</p>
+					<div class="col-sm-3 text-right" >
+						<div class="inline" ng-controller="H2tvEquipListByTrans" ng-if="item.status == 20">
+							<var ng-init="param.id_trans = item.id_trans"></var>
+							<form name="form_H2tvEquipListByTrans" action="/ctrl/h2tv/equip.list.bytrans.jsp" ng-asyncform="" param="param">
+								<button type="submit" class="btn btn-info" ng-disabled="loading">
+									장비
+								</button>
+							</form>
+						</div>
+
+						<div class="inline"  ng-controller="H2tvEquipExecute" ng-if="$parent.isHQ && item.status == 20">
+							<var ng-init="param.id_req = item.id_req"></var>
+							<var ng-init="param.id_trans = item.id_trans"></var>
+							<form name="form_H2tvEquipExecute" action="/ctrl/h2tv/equip.trans.receipt.ret.jsp" method="post" ng-asyncform="" confirm="장비 반납을 수령 하시겠습니까?">
+								<input type="text" name="id_req" class="hidden" ng-model="param.id_req">
+								<input type="text" name="id_trans" class="hidden" ng-model="param.id_trans">
+								
+								<button type="submit" class="btn btn-success">수령</button>
+							</form>
+						</div><!-- #H2tvEquipExecute -->
+
+						<!-- <a class="btn btn-warning" ng-href="#/transret/mod/{{item.id_trans}}" ng-if="$parent.isHQ && item.status == 20">변경</a> -->
+
+						<div class="inline"  ng-controller="H2tvEquipExecute" ng-if="(!$parent.isHQ || item.id_from == '00020') && item.status == 20">
+							<var ng-init="param.id_req = item.id_req"></var>
+							<var ng-init="param.id_trans = item.id_trans"></var>
+							<form name="form_H2tvEquipExecute" action="/ctrl/h2tv/equip.trans.cancel.jsp" method="post" ng-asyncform="" confirm="현재 반납을 정말 취소 하시겠습니까?">
+								<input type="text" name="id_req" class="hidden" ng-model="param.id_req">
+								<input type="text" name="id_trans" class="hidden" ng-model="param.id_trans">
+								
+								<button type="submit" class="btn btn-danger">취소</button>
+							</form>
+						</div><!-- #H2tvEquipExecute -->
+						
+					</div>
+				</div>
+			</li>
+		</ul>
+		<div class="jumbotron text-center" ng-show="list.length == 0">
+            내역이 존재하지 않습니다.
+        </div>
+	</div>
+
+	<div class="text-right">
+		<a ng-href="#/trans/add/0/0/ownlist" class="btn btn-success">반납</a>
+	</div>
+
+    <div class="text-center">
+        <ul uib-pagination ng-model="param.page" total-items="totalcount" max-size="navCount" previous-text="이전" next-text="다음" ng-change="onPageChange()"></ul>
+    </div>
+</div>

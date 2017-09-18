@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <title>가맹점 등록 요청</title>
+        <link rel="stylesheet" type="text/css" href="/mb/spa/css/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="/mb/spa/css/onsmobile.css" />
+        <script src="/mb/spa/lib/jquery-2.2.3.min.js"></script>
+        <script src="/mb/spa/lib/bootstrap.min.js"></script>
+        <script src="/mb/spa/lib/angular.min.js"></script>
+        <script src="/mb/spa/lib/angular-animate.min.js"></script>
+        <script src="/mb/spa/lib/angular-sanitize.min.js"></script>
+        <script src="/mb/spa/lib/angular-ui-router.min.js"></script>
+        <script src="/mb/spa/lib/ng-upload.min.js"></script>
+        <script src="/mb/spa/lib/ui-bootstrap-custom-tpls-1.3.3.min.js"></script>
+        <script src="/mb/spa/lib/ng-asyncform.js?v=1"></script>
+        <script src="/mb/spa/js/service/common.service.js"></script>
+        <script src="/mb/spa/js/directive/common.directive.js"></script>
+        <script src="/mb/spa/js/controller/custmng/regreq.controller.js"></script>
+        <script src="/mb/spa/js/route/custmng/regreq.route.js"></script>
+        <script src="/mb/spa/js/onsmobile.js?v=7"></script>
+    </head>
+    <body ng-app="onsmobile" ng-controller="base">
+        <section class="container">
+            <hgroup class="page-header">
+                <h1>가맹점 등록 <br/><small>PlayTV, 무비텔 가맹점 등록</small></h1>
+            </hgroup>
+            <article data-ui-view="" data-autoscroll="false" ng-class="view-ani"></article>
+        </section>
+        <div class="hidden" style="position: relative;">
+            <br/>
+            <footer class="footer-gototop text-center text-info">
+                <a href="#">(▲ 위로 가기)</a>
+            </footer>
+        </div>
+    </body>
+</html>
